@@ -1,0 +1,14 @@
+.metadata {
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1em;
+  font-size: 12px;
+  opacity: 0.5;
+
+  .git-sha {
+    font-weight: bold;
+  }
+}

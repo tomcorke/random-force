@@ -1,0 +1,37 @@
+.kofiContainer {
+  --df-green: #10f898;
+
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+
+  .link {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    overflow: hidden;
+    text-decoration: none;
+    padding: 0 5px;
+    gap: 0.5em;
+
+    &:active,
+    &:visited {
+      color: white;
+    }
+    &:hover {
+      background: var(--df-green);
+      color: black;
+
+      span {
+        background: none;
+      }
+    }
+
+    span {
+      padding: 2px 12px;
+      border-radius: 4px;
+    }
+  }
+}
