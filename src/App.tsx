@@ -16,7 +16,7 @@ import * as rigs from "./data/generated/rigs";
 const itemArrayFromData = (
   data: Record<string, { image: string; data: { name: string } }>
 ) =>
-  Object.entries(data).map(([key, value]) => ({
+  Object.entries(data).map(([, value]) => ({
     name: value.data.name,
     image: value.image,
   }));
