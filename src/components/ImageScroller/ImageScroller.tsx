@@ -53,10 +53,9 @@ export const ImageScroller = forwardRef<
 
     // Fast spin
     let current = index;
-    let speed = 30; // ms per frame
-    let interval = speed;
-    let elapsed = 0;
-    const slowDownDuration = 2000; // 2 seconds to slow down
+    const speed = 30; // ms per frame
+    const interval = speed;
+    // const slowDownDuration = 2000; // 2 seconds to slow down
 
     if (spinInterval.current) clearInterval(spinInterval.current);
     if (spinTimeout.current) clearTimeout(spinTimeout.current);
@@ -78,17 +77,16 @@ export const ImageScroller = forwardRef<
         setScrollPosition(-(current * IMAGE_SIZE));
       }
       setIndex(current);
-      elapsed += interval;
     }, interval);
 
     // After spinDuration, start slowing down
     spinTimeout.current = setTimeout(() => {
       if (spinInterval.current) clearInterval(spinInterval.current);
       let slowCurrent = current;
-      let steps =
+      const steps =
         ((targetIndex !== null ? targetIndex : 0) - slowCurrent + imageCount) %
         imageCount;
-      let slowSteps = steps + imageCount * 2; // always at least 2 full cycles for drama
+      const slowSteps = steps + imageCount * 2; // always at least 2 full cycles for drama
       let slowStep = 0;
       let slowInterval = 80;
       slowDownTimeout.current = setInterval(() => {
