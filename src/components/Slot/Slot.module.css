@@ -1,0 +1,20 @@
+.Slot {
+  /* Border intentionally outside the box size */
+  box-sizing: content-box;
+  width: 200px;
+  height: 200px;
+  border: 8px groove #999;
+  border-radius: 8px;
+
+  box-shadow: 0 0 5px 1px black;
+
+  background: linear-gradient(135deg, #222, #000);
+
+  position: relative;
+  overflow: hidden;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

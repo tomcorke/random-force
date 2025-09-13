@@ -9,15 +9,19 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build-metadata": "node src/scripts/build-metadata.ts",
+    "generate-data-components": "node src/scripts/generate-data-components.ts",
     "clean": "rimraf dist && rimraf .parcel-cache",
     "deploy": "npm run build && gh-pages -d dist --branch publish --cname random-force.corke.dev"
   },
   "dependencies": {
+    "classnames": "^2.5.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/node": "^24.3.3",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.0",

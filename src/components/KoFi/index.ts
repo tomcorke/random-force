@@ -1,3 +1,1 @@
-import KoFi from './KoFi';
-
-export default KoFi;
+export { KoFi } from "./KoFi";

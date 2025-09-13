@@ -4,6 +4,7 @@
 
 html {
   font-family: system-ui;
+  font-size: 16px;
 
   --bg-color: #181818;
   --text-color: #f0f0f0;

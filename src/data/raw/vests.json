@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Adamantine Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006001.png",
+    "tier": 6
+  },
+  {
+    "name": "HA-2 Ballistic Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006002.png",
+    "tier": 6
+  },
+  {
+    "name": "Trek MAS2.0 Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006003.png",
+    "tier": 6
+  },
+  {
+    "name": "Titan Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006004.png",
+    "tier": 6
+  },
+  {
+    "name": "Elite Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005001.png",
+    "tier": 5
+  },
+  {
+    "name": "Hvk-2 Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005002.png",
+    "tier": 5
+  },
+  {
+    "name": "FS Composite Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005003.png",
+    "tier": 5
+  },
+  {
+    "name": "Heavy Assault Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005004.png",
+    "tier": 5
+  },
+  {
+    "name": "Warrior Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004001.png",
+    "tier": 4
+  },
+  {
+    "name": "Assault Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004002.png",
+    "tier": 4
+  },
+  {
+    "name": "DT-AVS Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004003.png",
+    "tier": 4
+  },
+  {
+    "name": "MK-2 Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004004.png",
+    "tier": 4
+  },
+  {
+    "name": "HMP Special Ops Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004007.png",
+    "tier": 4
+  },
+  {
+    "name": "Standard Issue Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003001.png",
+    "tier": 3
+  },
+  {
+    "name": "Hvk QR Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003002.png",
+    "tier": 3
+  },
+  {
+    "name": "TG-H Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003003.png",
+    "tier": 3
+  },
+  {
+    "name": "Marksman TAC Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Basic Stab Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002001.png",
+    "tier": 2
+  },
+  {
+    "name": "HT Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002002.png",
+    "tier": 2
+  },
+  {
+    "name": "TG Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002003.png",
+    "tier": 2
+  },
+  {
+    "name": "Universal Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Motorcycle Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Security Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Nylon Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001003.png",
+    "tier": 1
+  },
+  {
+    "name": "Light Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001004.png",
+    "tier": 1
+  }
+]

@@ -5,7 +5,7 @@ const kofiIcon = new URL(
 
 import STYLES from "./KoFi.module.css";
 
-const KoFi = () => {
+export const KoFi = () => {
   return (
     <div className={STYLES.kofiContainer}>
       <a
@@ -25,5 +25,3 @@ const KoFi = () => {
     </div>
   );
 };
-
-export default KoFi;

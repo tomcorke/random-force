@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Hurricane Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005001.png",
+    "tier": 5
+  },
+  {
+    "name": "Black Hawk Field Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005003.png",
+    "tier": 5
+  },
+  {
+    "name": "DAR Assault Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005004.png",
+    "tier": 5
+  },
+  {
+    "name": "Assault Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004001.png",
+    "tier": 4
+  },
+  {
+    "name": "Raider Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004002.png",
+    "tier": 4
+  },
+  {
+    "name": "DRC Advanced Recon Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004003.png",
+    "tier": 4
+  },
+  {
+    "name": "GIR Field Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004004.png",
+    "tier": 4
+  },
+  {
+    "name": "Basic Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003001.png",
+    "tier": 3
+  },
+  {
+    "name": "HD3 Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003002.png",
+    "tier": 3
+  },
+  {
+    "name": "DSA Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003003.png",
+    "tier": 3
+  },
+  {
+    "name": "G01 Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Nylon Sling Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002001.png",
+    "tier": 2
+  },
+  {
+    "name": "HK3 Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002002.png",
+    "tier": 2
+  },
+  {
+    "name": "D01 Light Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002003.png",
+    "tier": 2
+  },
+  {
+    "name": "Universal Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Quick Recon Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Light Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001003.png",
+    "tier": 1
+  },
+  {
+    "name": "Basic Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001004.png",
+    "tier": 1
+  }
+]

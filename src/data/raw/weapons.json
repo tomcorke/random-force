@@ -1,0 +1,252 @@
+[
+  {
+    "name": "M4A1 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000001.png",
+    "type": "rifle"
+  },
+  {
+    "name": "AKM Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000006.png",
+    "type": "rifle"
+  },
+  {
+    "name": "QBZ95-1 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000008.png",
+    "type": "rifle"
+  },
+  {
+    "name": "AKS-74 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000010.png",
+    "type": "rifle"
+  },
+  {
+    "name": "ASh-12 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000012.png",
+    "type": "rifle"
+  },
+  {
+    "name": "K416 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000013.png",
+    "type": "rifle"
+  },
+  {
+    "name": "M16A4 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000014.png",
+    "type": "rifle"
+  },
+  {
+    "name": "AUG Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000015.png",
+    "type": "rifle"
+  },
+  {
+    "name": "M7 Battle Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000016.png",
+    "type": "rifle"
+  },
+  {
+    "name": "SG552 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000017.png",
+    "type": "rifle"
+  },
+  {
+    "name": "AK-12 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000018.png",
+    "type": "rifle"
+  },
+  {
+    "name": "SCAR-H Battle Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000021.png",
+    "type": "rifle"
+  },
+  {
+    "name": "G3 Battle Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000023.png",
+    "type": "rifle"
+  },
+  {
+    "name": "PTR-32 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000024.png",
+    "type": "rifle"
+  },
+  {
+    "name": "CAR-15 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000031.png",
+    "type": "rifle"
+  },
+  {
+    "name": "AS Val Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000037.png",
+    "type": "rifle"
+  },
+  {
+    "name": "CI-19 Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18010000038.png",
+    "type": "rifle"
+  },
+  {
+    "name": "MP5 Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000001.png",
+    "type": "smg"
+  },
+  {
+    "name": "P90 Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000002.png",
+    "type": "smg"
+  },
+  {
+    "name": "Vector Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000003.png",
+    "type": "smg"
+  },
+  {
+    "name": "UZI Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000004.png",
+    "type": "smg"
+  },
+  {
+    "name": "Bizon Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000005.png",
+    "type": "smg"
+  },
+  {
+    "name": "SMG-45 Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000006.png",
+    "type": "smg"
+  },
+  {
+    "name": "SR-3M Compact Assault Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000008.png",
+    "type": "smg"
+  },
+  {
+    "name": "Vityaz Submachine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000009.png",
+    "type": "smg"
+  },
+  {
+    "name": "MP7",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000010.png",
+    "type": "smg"
+  },
+  {
+    "name": "M1014 Shotgun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18030000001.png",
+    "type": "shotgun"
+  },
+  {
+    "name": "S12K Shotgun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18030000002.png",
+    "type": "shotgun"
+  },
+  {
+    "name": "M870 Shotgun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18030000004.png",
+    "type": "shotgun"
+  },
+  {
+    "name": "PKM General Machine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18040000001.png",
+    "type": "lmg"
+  },
+  {
+    "name": "M249 Light Machine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18040000002.png",
+    "type": "lmg"
+  },
+  {
+    "name": "M250 General Machine Gun",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18040000003.png",
+    "type": "lmg"
+  },
+  {
+    "name": "Mini-14 Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000002.png",
+    "type": "mp"
+  },
+  {
+    "name": "VSS Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000003.png",
+    "type": "mp"
+  },
+  {
+    "name": "SVD Sniper Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000004.png",
+    "type": "mp"
+  },
+  {
+    "name": "M14 Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000005.png",
+    "type": "mp"
+  },
+  {
+    "name": "SKS Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000006.png",
+    "type": "mp"
+  },
+  {
+    "name": "SR-25 Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000007.png",
+    "type": "mp"
+  },
+  {
+    "name": "PSG-1 Marksman Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000031.png",
+    "type": "mp"
+  },
+  {
+    "name": "SV-98 Sniper Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18060000007.png",
+    "type": "sniper"
+  },
+  {
+    "name": "R93 Sniper Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18060000008.png",
+    "type": "sniper"
+  },
+  {
+    "name": "M700 Sniper Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18060000009.png",
+    "type": "sniper"
+  },
+  {
+    "name": "AWM Sniper Rifle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18060000011.png",
+    "type": "sniper"
+  },
+  {
+    "name": "QSZ-92G",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000002.png",
+    "type": "pistol"
+  },
+  {
+    "name": ".357 Revolver",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000003.png",
+    "type": "pistol"
+  },
+  {
+    "name": "Desert Eagle",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000004.png",
+    "type": "pistol"
+  },
+  {
+    "name": "G18",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000005.png",
+    "type": "pistol"
+  },
+  {
+    "name": "93R",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000006.png",
+    "type": "pistol"
+  },
+  {
+    "name": "G17",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000010.png",
+    "type": "pistol"
+  },
+  {
+    "name": "M1911",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000033.png",
+    "type": "pistol"
+  }
+]

@@ -1,0 +1,467 @@
+[
+  {
+    "name": "H70 Elite Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010006002.png",
+    "tier": 6
+  },
+  {
+    "name": "DICH-9 Heavy Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010006003.png",
+    "tier": 6
+  },
+  {
+    "name": "GT5 Commander Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010006004.png",
+    "tier": 6
+  },
+  {
+    "name": "Adamantine Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006001.png",
+    "tier": 6
+  },
+  {
+    "name": "HA-2 Ballistic Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006002.png",
+    "tier": 6
+  },
+  {
+    "name": "Trek MAS2.0 Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006003.png",
+    "tier": 6
+  },
+  {
+    "name": "Titan Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050006004.png",
+    "tier": 6
+  },
+  {
+    "name": "Heavy Climbing Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080006002.png",
+    "tier": 6
+  },
+  {
+    "name": "D7 Tactical Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080006003.png",
+    "tier": 6
+  },
+  {
+    "name": "GTO Heavy Tactical Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080006004.png",
+    "tier": 6
+  },
+  {
+    "name": "Mask-1 Iron Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010005001.png",
+    "tier": 5
+  },
+  {
+    "name": "H09 Anti-Riot Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010005002.png",
+    "tier": 5
+  },
+  {
+    "name": "DICH-1 Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010005003.png",
+    "tier": 5
+  },
+  {
+    "name": "GN Heavy Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010005004.png",
+    "tier": 5
+  },
+  {
+    "name": "Elite Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005001.png",
+    "tier": 5
+  },
+  {
+    "name": "Hvk-2 Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005002.png",
+    "tier": 5
+  },
+  {
+    "name": "FS Composite Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005003.png",
+    "tier": 5
+  },
+  {
+    "name": "Heavy Assault Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050005004.png",
+    "tier": 5
+  },
+  {
+    "name": "Hurricane Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005001.png",
+    "tier": 5
+  },
+  {
+    "name": "Black Hawk Field Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005003.png",
+    "tier": 5
+  },
+  {
+    "name": "DAR Assault Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070005004.png",
+    "tier": 5
+  },
+  {
+    "name": "ALS Load System",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080005001.png",
+    "tier": 5
+  },
+  {
+    "name": "HLS-2 Heavy Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080005002.png",
+    "tier": 5
+  },
+  {
+    "name": "D3 Tactical Climbing Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080005003.png",
+    "tier": 5
+  },
+  {
+    "name": "GT5 Field Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080005004.png",
+    "tier": 5
+  },
+  {
+    "name": "D6 Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010004001.png",
+    "tier": 4
+  },
+  {
+    "name": "MHS Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010004002.png",
+    "tier": 4
+  },
+  {
+    "name": "DICH Training Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010004003.png",
+    "tier": 4
+  },
+  {
+    "name": "GT1 Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010004004.png",
+    "tier": 4
+  },
+  {
+    "name": "Warrior Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004001.png",
+    "tier": 4
+  },
+  {
+    "name": "Assault Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004002.png",
+    "tier": 4
+  },
+  {
+    "name": "DT-AVS Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004003.png",
+    "tier": 4
+  },
+  {
+    "name": "MK-2 Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004004.png",
+    "tier": 4
+  },
+  {
+    "name": "HMP Special Ops Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050004007.png",
+    "tier": 4
+  },
+  {
+    "name": "Assault Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004001.png",
+    "tier": 4
+  },
+  {
+    "name": "Raider Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004002.png",
+    "tier": 4
+  },
+  {
+    "name": "DRC Advanced Recon Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004003.png",
+    "tier": 4
+  },
+  {
+    "name": "GIR Field Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070004004.png",
+    "tier": 4
+  },
+  {
+    "name": "MAP Recon Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080004001.png",
+    "tier": 4
+  },
+  {
+    "name": "Field Hiking Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080004002.png",
+    "tier": 4
+  },
+  {
+    "name": "D2 Tactical Climbing Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080004003.png",
+    "tier": 4
+  },
+  {
+    "name": "GT1 Outdoor Climbing Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080004004.png",
+    "tier": 4
+  },
+  {
+    "name": "Pangolin Universal Tactical Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080004005.png",
+    "tier": 4
+  },
+  {
+    "name": "Anti-Riot Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010003001.png",
+    "tier": 3
+  },
+  {
+    "name": "H07 Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010003002.png",
+    "tier": 3
+  },
+  {
+    "name": "DAS Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010003003.png",
+    "tier": 3
+  },
+  {
+    "name": "MC201 Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Standard Issue Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003001.png",
+    "tier": 3
+  },
+  {
+    "name": "Hvk QR Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003002.png",
+    "tier": 3
+  },
+  {
+    "name": "TG-H Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003003.png",
+    "tier": 3
+  },
+  {
+    "name": "Marksman TAC Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Basic Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003001.png",
+    "tier": 3
+  },
+  {
+    "name": "HD3 Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003002.png",
+    "tier": 3
+  },
+  {
+    "name": "DSA Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003003.png",
+    "tier": 3
+  },
+  {
+    "name": "G01 Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Large Climbing Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080003001.png",
+    "tier": 3
+  },
+  {
+    "name": "3H Tactical Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080003002.png",
+    "tier": 3
+  },
+  {
+    "name": "DASH Tactical Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080003003.png",
+    "tier": 3
+  },
+  {
+    "name": "GA Field Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080003004.png",
+    "tier": 3
+  },
+  {
+    "name": "Rainforest Hunter Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080003005.png",
+    "tier": 3
+  },
+  {
+    "name": "Retro Motorcycle Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010002001.png",
+    "tier": 2
+  },
+  {
+    "name": "H01 Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010002002.png",
+    "tier": 2
+  },
+  {
+    "name": "DRO Tactical Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010002003.png",
+    "tier": 2
+  },
+  {
+    "name": "MC Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Basic Stab Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002001.png",
+    "tier": 2
+  },
+  {
+    "name": "HT Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002002.png",
+    "tier": 2
+  },
+  {
+    "name": "TG Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002003.png",
+    "tier": 2
+  },
+  {
+    "name": "Universal Tactical Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Nylon Sling Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002001.png",
+    "tier": 2
+  },
+  {
+    "name": "HK3 Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002002.png",
+    "tier": 2
+  },
+  {
+    "name": "D01 Light Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002003.png",
+    "tier": 2
+  },
+  {
+    "name": "Universal Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Light Outdoor Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080002001.png",
+    "tier": 2
+  },
+  {
+    "name": "Tactical QR Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080002002.png",
+    "tier": 2
+  },
+  {
+    "name": "Assault Tactical Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080002003.png",
+    "tier": 2
+  },
+  {
+    "name": "Camping Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080002004.png",
+    "tier": 2
+  },
+  {
+    "name": "Steel Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Security Helmet",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Boonie Hat",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010001003.png",
+    "tier": 1
+  },
+  {
+    "name": "Outdoor Baseball Cap",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010001004.png",
+    "tier": 1
+  },
+  {
+    "name": "Motorcycle Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Security Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Nylon Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001003.png",
+    "tier": 1
+  },
+  {
+    "name": "Light Vest",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11050001004.png",
+    "tier": 1
+  },
+  {
+    "name": "Portable Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Quick Recon Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Light Tactical Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001003.png",
+    "tier": 1
+  },
+  {
+    "name": "Basic Chest Rig",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11070001004.png",
+    "tier": 1
+  },
+  {
+    "name": "Sling Bag",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080001001.png",
+    "tier": 1
+  },
+  {
+    "name": "Sports Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080001002.png",
+    "tier": 1
+  },
+  {
+    "name": "Travel Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080001003.png",
+    "tier": 1
+  },
+  {
+    "name": "DG Sports Backpack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080001004.png",
+    "tier": 1
+  },
+  {
+    "name": "Rucksack",
+    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11080001005.png",
+    "tier": 1
+  }
+]
