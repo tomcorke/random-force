@@ -1,5 +1,6 @@
 export * as backpacks from './backpacks';
 export * as helmets from './helmets';
+export * as maps from './maps';
 export * as operators from './operators';
 export * as operators_basic from './operators_basic';
 export * as optics from './optics';

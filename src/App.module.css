@@ -42,6 +42,11 @@
     margin-bottom: 2em;
   }
 
+  .slotRow {
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+
   .slotTitles {
     display: flex;
     flex-direction: row;
@@ -56,5 +61,11 @@
     color: #ddd;
     font-size: 14px;
     text-transform: capitalize;
+  }
+
+  .mobileOnly {
+    @media (min-width: 800px) {
+      display: none;
+    }
   }
 }

@@ -184,6 +184,9 @@ const ImageScrollerImpl = (
 
   // Convert numeric tier to the TierIcon expected union type (1..6)
   const toTierUnion = (n?: number) => {
+    if (n === undefined) {
+      return undefined;
+    }
     const t = Math.max(1, Math.min(6, Math.floor(n ?? 1)));
     return t as 1 | 2 | 3 | 4 | 5 | 6;
   };
@@ -245,8 +248,11 @@ const ImageScrollerImpl = (
   let overlayIcon: JSX.Element | null = null;
   if (isOperator) {
     overlayIcon = <img className={STYLES.classIcon} src={items[index]?.icon} />;
-  } else if (!isWeapon) {
-    overlayIcon = <TierIcon tier={toTierUnion(items[index]?.tier)} />;
+  } else {
+    const tier = toTierUnion(items[index]?.tier);
+    if (tier !== undefined) {
+      overlayIcon = <TierIcon tier={tier} />;
+    }
   }
 
   return (
@@ -268,12 +274,13 @@ const ImageScrollerImpl = (
             const isCenter = idx === index;
             return (
               <div
-                key={item.name}
+                key={`${item.name}_${idx}`}
                 className={classnames(
                   STYLES.image,
                   isWeapon && STYLES.weapon,
                   isOperator && STYLES.operator,
                   isCenter && STYLES.highlight,
+                  !isCenter && !isSpinning && STYLES.dimmed,
                   isTransitioning && STYLES.transition
                 )}
                 style={{ transform, zIndex: 1000 - Math.abs(normalizedOffset) }}

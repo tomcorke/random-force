@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Zero Dam",
+    "src": "./images/zeroDam.png"
+  },
+  {
+    "name": "Space City",
+    "src": "./images/spaceCity.png"
+  },
+  {
+    "name": "Layali Grove",
+    "src": "./images/layaliGrove.png"
+  },
+  {
+    "name": "Brakkesh",
+    "src": "./images/brakkesh.png"
+  },
+  {
+    "name": "Tide Prison",
+    "src": "./images/tidePrison.png"
+  }
+]

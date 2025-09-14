@@ -8,14 +8,18 @@ import { Slot } from "./components/Slot";
 import { COLORS } from "./constants";
 import { SettingsPanel } from "./components/SettingsPanel/SettingsPanel";
 
-import * as helmets from "./data/generated/helmets";
-import * as vests from "./data/generated/vests";
-import * as backpacks from "./data/generated/backpacks";
-import * as rigs from "./data/generated/rigs";
-import * as weapons from "./data/generated/weapons";
 import type { ScrollerItem } from "./components/ImageScroller/ImageScroller";
 import useSettings from "./contexts/useSettings";
-import { operators } from "./data/generated";
+import {
+  maps,
+  operators,
+  helmets,
+  vests,
+  backpacks,
+  rigs,
+  weapons,
+} from "./data/generated";
+import classnames from "classnames";
 
 const itemArrayFromData = (
   data: Record<
@@ -42,6 +46,7 @@ const itemArrayFromData = (
 };
 
 const operatorsArray = itemArrayFromData(operators);
+const mapsArray = itemArrayFromData(maps);
 const helmetsArray = itemArrayFromData(helmets);
 const vestsArray = itemArrayFromData(vests);
 const backpacksArray = itemArrayFromData(backpacks);
@@ -73,6 +78,18 @@ function App() {
       items: operatorsArray,
       initialColor: COLORS.dfQualityLegendary,
       variant: "operator",
+    },
+    { key: "maps", items: mapsArray, initialColor: COLORS.dfQualityEpic },
+    // weapons are wide images; mark variant so UI can size accordingly
+    {
+      key: "weapons",
+      items: weaponsArray,
+      initialColor: COLORS.dfQualityRare,
+      variant: "weapon",
+      selectionFilter: (item) =>
+        item.type === undefined ||
+        // only show enabled weapon types
+        weaponTypeEnabled[item.type],
     },
     {
       key: "helmets",
@@ -108,17 +125,6 @@ function App() {
         item.tier === undefined ||
         (item.tier >= tierBounds.backpacks.min &&
           item.tier <= tierBounds.backpacks.max),
-    },
-    // weapons are wide images; mark variant so UI can size accordingly
-    {
-      key: "weapons",
-      items: weaponsArray,
-      initialColor: COLORS.dfQualityRare,
-      variant: "weapon",
-      selectionFilter: (item) =>
-        item.type === undefined ||
-        // only show enabled weapon types
-        weaponTypeEnabled[item.type],
     },
   ];
 
@@ -196,7 +202,17 @@ function App() {
     <>
       <div className={STYLES.App}>
         <h1>Shotski's Random Delta Force Loadout Spinner</h1>
-        <div className={STYLES.row}>
+
+        <div className={classnames(STYLES.row, STYLES.mobileOnly)}>
+          {spinning.some(Boolean) ? (
+            <Button onClick={stopAll}>
+              Let the reels spin, or press to stop now!
+            </Button>
+          ) : (
+            <Button onClick={spinAll}>Shoot, Loot, and Scoot!</Button>
+          )}
+        </div>
+        <div className={classnames(STYLES.row, STYLES.slotRow)}>
           {categories.map((cat, idx) => (
             <div className={STYLES.column} key={cat.key}>
               <Slot
