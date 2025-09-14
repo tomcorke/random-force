@@ -22,7 +22,7 @@ type ImageScrollerProps = {
   items: ScrollerItem[];
   onIndexChange?: (index: number, item: ScrollerItem) => void;
   onSpinningChange?: (isSpinning: boolean) => void;
-  variant?: "weapon";
+  variant?: "weapon" | "operator";
   selectionFilter?: (item: ScrollerItem) => boolean;
 };
 
@@ -44,6 +44,8 @@ const ImageScrollerImpl = (
 ) => {
   const imageCount = items.length;
   const isWeapon = variant === "weapon";
+  const isOperator = variant === "operator";
+  const showResultTier = !isWeapon && !isOperator;
   const IMAGE_SIZE = isWeapon ? 200 : 200;
   const angleStep = 8; // degrees per item on the wheel
   const spacing = IMAGE_SIZE + 10; // outer size includes padding
@@ -128,7 +130,8 @@ const ImageScrollerImpl = (
       let slowCurrent = current;
       const steps = ((finalTarget - slowCurrent + imageCount) %
         imageCount) as number;
-      const slowSteps = steps + imageCount * 2; // extra cycles
+      const extraCycles = 0; //variant === "weapon" ? 1 : 2;
+      const slowSteps = steps + imageCount * extraCycles;
       let slowStep = 0;
       let slowInterval = 80;
       slowDownTimeout.current = window.setInterval(() => {
@@ -240,7 +243,11 @@ const ImageScrollerImpl = (
 
   return (
     <div
-      className={classnames(STYLES.ImageScroller, isWeapon && STYLES.weapon)}
+      className={classnames(
+        STYLES.ImageScroller,
+        isWeapon && STYLES.weapon,
+        isOperator && STYLES.operator
+      )}
       style={{ cursor: isSpinning ? "not-allowed" : "pointer" }}
     >
       <div className={STYLES.scrollerWindow}>
@@ -257,6 +264,7 @@ const ImageScrollerImpl = (
                 className={classnames(
                   STYLES.image,
                   isWeapon && STYLES.weapon,
+                  isOperator && STYLES.operator,
                   isCenter && STYLES.highlight,
                   isTransitioning && STYLES.transition
                 )}
@@ -272,9 +280,11 @@ const ImageScrollerImpl = (
       <div
         className={classnames(STYLES.resultOverlay, showResult && STYLES.show)}
       >
-        <div className={STYLES.resultTier}>
-          <TierIcon tier={toTierUnion(items[index]?.tier)} />
-        </div>
+        {showResultTier ? (
+          <div className={STYLES.resultTier}>
+            <TierIcon tier={toTierUnion(items[index]?.tier)} />
+          </div>
+        ) : null}
         <div className={STYLES.resultName}>{items[index]?.name}</div>
       </div>
     </div>

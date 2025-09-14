@@ -85,6 +85,16 @@
     "type": "rifle"
   },
   {
+    "name": "K437 Assault Rifle",
+    "src": "./images/k437.png",
+    "type": "rifle"
+  },
+  {
+    "name": "KC17 Assault Rifle",
+    "src": "./images/kc17.png",
+    "type": "rifle"
+  },
+  {
     "name": "MP5 Submachine Gun",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18020000001.png",
     "type": "smg"
@@ -130,6 +140,11 @@
     "type": "smg"
   },
   {
+    "name": "QCQ171 Submachine Gun",
+    "src": "./images/qcq171.png",
+    "type": "smg"
+  },
+  {
     "name": "M1014 Shotgun",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18030000001.png",
     "type": "shotgun"
@@ -145,6 +160,11 @@
     "type": "shotgun"
   },
   {
+    "name": "725 Double-Barrel Shotgun",
+    "src": "./images/725.png",
+    "type": "shotgun"
+  },
+  {
     "name": "PKM General Machine Gun",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18040000001.png",
     "type": "lmg"
@@ -157,6 +177,11 @@
   {
     "name": "M250 General Machine Gun",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18040000003.png",
+    "type": "lmg"
+  },
+  {
+    "name": "QJB201 Light Machine Gun",
+    "src": "./images/qjb201.png",
     "type": "lmg"
   },
   {
@@ -191,7 +216,12 @@
   },
   {
     "name": "PSG-1 Marksman Rifle",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18050000031.png",
+    "src": "./images/psg1.png",
+    "type": "mp"
+  },
+  {
+    "name": "SR9 Marksman Rifle",
+    "src": "./images/sr9.png",
     "type": "mp"
   },
   {
@@ -248,5 +278,10 @@
     "name": "M1911",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_18070000033.png",
     "type": "pistol"
+  },
+  {
+    "name": "Compound Bow",
+    "src": "./images/compoundBow.png",
+    "type": "special"
   }
 ]

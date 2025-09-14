@@ -15,20 +15,27 @@ import * as rigs from "./data/generated/rigs";
 import * as weapons from "./data/generated/weapons";
 import type { ScrollerItem } from "./components/ImageScroller/ImageScroller";
 import useSettings from "./contexts/useSettings";
+import { operators } from "./data/generated";
 
 const itemArrayFromData = (
   data: Record<
     string,
     { image: string; data: { name: string; tier?: number; type?: string } }
   >
-) =>
-  Object.entries(data).map(([, value]) => ({
+) => {
+  const array = Object.entries(data).map(([, value]) => ({
     name: value.data.name,
     image: value.image,
     tier: value.data.tier,
     type: value.data.type,
   }));
+  // Duplicate items to make array 2x as long
+  const duplicated = [...array, ...array];
+  // Shuffle
+  return duplicated.sort(() => Math.random() - 0.5);
+};
 
+const operatorsArray = itemArrayFromData(operators);
 const helmetsArray = itemArrayFromData(helmets);
 const vestsArray = itemArrayFromData(vests);
 const backpacksArray = itemArrayFromData(backpacks);
@@ -48,13 +55,19 @@ function App() {
     key: string;
     items: { name: string; image: string; tier?: number }[];
     initialColor?: string;
-    variant?: "weapon";
+    variant?: "weapon" | "operator";
     selectionFilter?: (item: ScrollerItem) => boolean;
   };
 
   const { tierBounds, weaponTypeEnabled } = useSettings();
 
   const categories: Category[] = [
+    {
+      key: "operators",
+      items: operatorsArray,
+      initialColor: COLORS.dfQualityLegendary,
+      variant: "operator",
+    },
     {
       key: "helmets",
       items: helmetsArray,
@@ -74,6 +87,14 @@ function App() {
           item.tier <= tierBounds.vests.max),
     },
     {
+      key: "rigs",
+      items: rigsArray,
+      initialColor: COLORS.dfQualityLegendary,
+      selectionFilter: (item) =>
+        item.tier === undefined ||
+        (item.tier >= tierBounds.rigs.min && item.tier <= tierBounds.rigs.max),
+    },
+    {
       key: "backpacks",
       items: backpacksArray,
       initialColor: COLORS.dfQualityEpic,
@@ -81,14 +102,6 @@ function App() {
         item.tier === undefined ||
         (item.tier >= tierBounds.backpacks.min &&
           item.tier <= tierBounds.backpacks.max),
-    },
-    {
-      key: "rigs",
-      items: rigsArray,
-      initialColor: COLORS.dfQualityLegendary,
-      selectionFilter: (item) =>
-        item.tier === undefined ||
-        (item.tier >= tierBounds.rigs.min && item.tier <= tierBounds.rigs.max),
     },
     // weapons are wide images; mark variant so UI can size accordingly
     {

@@ -69,6 +69,14 @@
   left: 0;
 }
 
+.image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
+}
+
 .image.weapon img {
   width: 100%;
   height: auto;
@@ -80,12 +88,8 @@
   margin-right: auto;
 }
 
-.image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  display: block;
+.image.operator img {
+  object-fit: cover;
 }
 
 .highlight {

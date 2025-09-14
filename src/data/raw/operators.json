@@ -1,34 +1,50 @@
 [
   {
-    "name": "Wang Yuhao",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000025.png"
+    "src": "./images/vyron.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10028.png",
+    "name": "Vyron",
+    "role": "assault"
   },
   {
-    "name": "Mai Xiaowen",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000026.png"
+    "src": "./images/hackclaw.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10033.png",
+    "name": "Hackclaw",
+    "role": "scout"
   },
   {
-    "name": "Roy Smee",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000027.png"
+    "src": "./images/stinger.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10023.png",
+    "name": "Stinger",
+    "role": "support"
   },
   {
-    "name": "Luna Kim",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000028.png"
+    "src": "./images/luna.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10033.png",
+    "name": "Luna",
+    "role": "scout"
   },
   {
-    "name": "Terry Musa",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000029.png"
+    "src": "./images/shepherd.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10038.png",
+    "name": "Shepherd",
+    "role": "project"
   },
   {
-    "name": "Kai Silva",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000030.png"
+    "src": "./images/dwolf.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10028.png",
+    "name": "D-wolf",
+    "role": "assault"
   },
   {
-    "name": "David Fletcher",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000035.png"
+    "src": "./images/uluru.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10038.png",
+    "name": "Uluru",
+    "role": "project"
   },
   {
-    "name": "Zoya Pomchenkova",
-    "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_88000000036.png"
+    "src": "./images/toxik.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10023.png",
+    "name": "Toxik",
+    "role": "support"
   }
 ]

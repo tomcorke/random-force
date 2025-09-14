@@ -62,6 +62,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     z.record(z.string(), z.boolean())
   );
 
+  if (weaponTypeSet.size !== Object.keys(weaponTypeEnabled).length) {
+    // weapon types have changed since last run; reset to default
+    setWeaponTypeEnabledState(defaultWeaponTypeEnabled);
+  }
+
   const setTierBounds = (key: string, bounds: { min: number; max: number }) =>
     setTierBoundsState((prev) => ({ ...prev, [key]: bounds }));
 

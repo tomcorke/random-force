@@ -16,20 +16,45 @@ export const SettingsPanel = () => {
 
   const [expanded, setExpanded] = useState(false);
 
-  // min/max tier settings for first 4 scrollers (0-based steps -> tier 1..6)
-  const categories = ["helmets", "vests", "backpacks", "rigs"];
   const { tierBounds, setTierBounds, weaponTypeEnabled, setWeaponTypeEnabled } =
     useSettings();
 
+  const armourCategories = ["helmets", "vests", "rigs", "backpacks"];
+  const weaponTypes: string[] = [
+    "rifle",
+    "smg",
+    "mp",
+    "sniper",
+    "lmg",
+    "shotgun",
+    "special",
+    "pistol",
+  ];
+
+  if (weaponTypes.some((t) => !Object.keys(weaponTypeEnabled).includes(t))) {
+    console.error(
+      "Unexpected weapon types",
+      weaponTypes.filter((t) => !Object.keys(weaponTypeEnabled).includes(t))
+    );
+    throw Error("Unexpected weapon types");
+  }
+  if (Object.keys(weaponTypeEnabled).some((t) => !weaponTypes.includes(t))) {
+    console.error(
+      "Missing weapon types in settings",
+      Object.keys(weaponTypeEnabled).filter((t) => !weaponTypes.includes(t))
+    );
+    throw Error("Missing weapon types in settings");
+  }
+
   const setMin = (idx: number, v: number) => {
-    const key = categories[idx];
+    const key = armourCategories[idx];
     const cur = tierBounds[key] || { min: 1, max: 6 };
     const next = { min: Math.min(v, cur.max), max: cur.max };
     setTierBounds(key, next);
   };
 
   const setMax = (idx: number, v: number) => {
-    const key = categories[idx];
+    const key = armourCategories[idx];
     const cur = tierBounds[key] || { min: 1, max: 6 };
     const next = { min: cur.min, max: Math.max(v, cur.min) };
     setTierBounds(key, next);
@@ -71,7 +96,7 @@ export const SettingsPanel = () => {
         <div className={STYLES.columns}>
           <div>
             <div className={STYLES.sectionNote}>Tier bounds per slot</div>
-            {categories.map((cat, idx) => (
+            {armourCategories.map((cat, idx) => (
               <div key={cat} style={{ marginTop: 8 }}>
                 <div className={STYLES.categoryTitle}>{cat}</div>
                 <div className={STYLES.twoColumn}>
@@ -100,7 +125,7 @@ export const SettingsPanel = () => {
           <div>
             <div className={STYLES.sectionNote}>Weapon types</div>
             <div className={STYLES.weaponTypes}>
-              {Object.keys(weaponTypeEnabled || {}).map((type) => (
+              {weaponTypes.map((type) => (
                 <label key={type} className={STYLES.weaponLabel}>
                   <input
                     type="checkbox"

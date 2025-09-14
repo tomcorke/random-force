@@ -5,7 +5,7 @@ type SlotProps = {
   children?: JSX.Element;
   color?: string;
   label?: string;
-  variant?: "weapon";
+  variant?: string;
 };
 
 export const Slot = ({ children, color, label, variant }: SlotProps) => {

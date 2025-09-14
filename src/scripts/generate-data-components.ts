@@ -9,7 +9,7 @@
 //       - Generates an index.ts that exports the item data and image path
 //   - Generates an index.ts in the category folder that exports all items
 // - Generates an index.ts in src/generated that exports all categories
-import { promises as fs } from "fs"; // Node.js file system promises API
+import fs from "fs"; // Node.js file system promises API
 import * as path from "path"; // Node.js path utilities
 
 // __dirname polyfill for ESM (Windows compatible)
@@ -45,7 +45,7 @@ function sanitizeName(name: string): string {
  * Ensures a directory exists, creating it recursively if needed.
  */
 async function ensureDir(dir: string) {
-  await fs.mkdir(dir, { recursive: true });
+  fs.mkdirSync(dir, { recursive: true });
 }
 
 /**
@@ -56,8 +56,13 @@ async function downloadImage(url: string, dest: string) {
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
   const arrayBuffer = await res.arrayBuffer();
   // Buffer is available in Node.js
-  await fs.writeFile(dest, Buffer.from(arrayBuffer));
+  fs.writeFileSync(dest, Buffer.from(arrayBuffer));
 }
+
+// const propertyBehaviours: Record<
+//   string,
+//   { fn: (key: string, value: string) => any; key: string }
+// > = {};
 
 /**
  * Main script logic:
@@ -67,9 +72,9 @@ async function downloadImage(url: string, dest: string) {
  */
 async function main() {
   console.log("Reading raw data directory:", RAW_DIR);
-  const files = (await fs.readdir(RAW_DIR)).filter((f: string) =>
-    f.endsWith(".json")
-  );
+  const files = fs
+    .readdirSync(RAW_DIR)
+    .filter((f: string) => f.endsWith(".json"));
   console.log(`Found ${files.length} category file(s):`, files);
   const categoryExports: string[] = [];
 
@@ -80,9 +85,7 @@ async function main() {
     console.log(`\nProcessing category: ${category}`);
     await ensureDir(categoryDir);
     // Parse all items in the category
-    const items = JSON.parse(
-      await fs.readFile(path.join(RAW_DIR, file), "utf8")
-    );
+    const items = JSON.parse(fs.readFileSync(path.join(RAW_DIR, file), "utf8"));
     console.log(`  Found ${items.length} item(s) in category '${category}'.`);
     const itemExports: string[] = [];
 
@@ -95,21 +98,50 @@ async function main() {
       );
       await ensureDir(itemDir);
       let imageExport = "";
+      let ext = ".png"; // Default extension
+      if (item.src.startsWith("http")) {
+        ext = path.extname(new URL(item.src).pathname) || ".png";
+      } else if (item.src.startsWith("./")) {
+        ext = path.extname(item.src) || ".png";
+      }
+      const imageFile = `image${ext}`;
+      const imagePath = path.join(itemDir, imageFile);
+
       // Download the item's image if a src is provided
       if (item.src) {
-        const ext = path.extname(new URL(item.src).pathname) || ".png";
-        const imageFile = `image${ext}`;
-        const imagePath = path.join(itemDir, imageFile);
-        console.log(`      Downloading image: ${item.src} -> ${imagePath}`);
-        try {
-          await downloadImage(item.src, imagePath);
-          console.log("      Image downloaded successfully.");
-        } catch (e) {
-          console.error(`      Failed to download image for ${item.name}:`, e);
+        if (item.src.startsWith("./")) {
+          // Local file reference
+          const localImagePath = path.resolve(RAW_DIR, item.src);
+          if (fs.existsSync(localImagePath)) {
+            fs.copyFileSync(localImagePath, imagePath);
+            console.log(
+              `      Copied local image: ${localImagePath} -> ${imagePath}`
+            );
+          } else {
+            throw Error(
+              `      Local image file does not exist: ${localImagePath}`
+            );
+          }
+        } else if (item.src.startsWith("http")) {
+          if (!fs.existsSync(imagePath)) {
+            console.log(`      Downloading image: ${item.src} -> ${imagePath}`);
+            try {
+              await downloadImage(item.src, imagePath);
+              console.log("      Image downloaded successfully.");
+            } catch (e) {
+              console.error(
+                `      Failed to download image for ${item.name}:`,
+                e
+              );
+            }
+          }
+        } else {
+          throw Error("Unsupported image source format: " + item.src);
         }
         // Export the image using require (for use in TS/JS)
         imageExport = `import image from './${imageFile}';`;
       }
+
       // Write the item's index.ts file exporting its data and image
       const itemIndex = [
         `const data = ${JSON.stringify(item, null, 2)};`,
@@ -118,12 +150,12 @@ async function main() {
       ]
         .filter(Boolean)
         .join("\n\n");
-      await fs.writeFile(path.join(itemDir, "index.ts"), itemIndex);
+      fs.writeFileSync(path.join(itemDir, "index.ts"), itemIndex);
       // Add export for this item to the category index
       itemExports.push(`export * as ${itemName} from './${itemName}';`);
     }
     // Write the category's index.ts exporting all items
-    await fs.writeFile(
+    fs.writeFileSync(
       path.join(categoryDir, "index.ts"),
       itemExports.join("\n")
     );
@@ -132,7 +164,7 @@ async function main() {
     categoryExports.push(`export * as ${category} from './${category}';`);
   }
   // Write the root generated/index.ts exporting all categories
-  await fs.writeFile(
+  fs.writeFileSync(
     path.join(GENERATED_DIR, "index.ts"),
     categoryExports.join("\n")
   );
