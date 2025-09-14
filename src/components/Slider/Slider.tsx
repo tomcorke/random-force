@@ -3,6 +3,7 @@ import STYLES from "./Slider.module.css";
 import { COLORS } from "../../constants";
 
 type SliderProps = {
+  startValue?: number;
   steps: number;
   value: number; // 0-based step index
   onChange: (v: number) => void;
@@ -23,12 +24,17 @@ const tierColor = (step: number) => {
 };
 
 export const Slider: React.FC<SliderProps> = ({
+  startValue = 0,
   steps,
   value,
   onChange,
   label,
 }) => {
-  const pct = steps > 1 ? (value / (steps - 1)) * 100 : 0;
+  const minValue = startValue;
+  const maxValue = startValue + steps - 1;
+  const valueRange = maxValue - minValue;
+
+  const pct = steps > 1 ? ((value - minValue) / valueRange) * 100 : 0;
   const trackRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
 
@@ -39,10 +45,10 @@ export const Slider: React.FC<SliderProps> = ({
       const rect = el.getBoundingClientRect();
       const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
       const pct = x / rect.width;
-      const step = Math.round(pct * (steps - 1));
+      const step = minValue + Math.round(pct * (steps - 1));
       return step;
     },
-    [steps]
+    [steps, minValue]
   );
 
   const startDrag = (e: React.PointerEvent) => {
@@ -72,13 +78,13 @@ export const Slider: React.FC<SliderProps> = ({
     <div className={STYLES.Slider}>
       <div className={STYLES.labelRow}>
         <div>{label}</div>
-        <div style={{ color: tierColor(value) }}>Tier {value + 1}</div>
+        <div style={{ color: tierColor(value) }}>Tier {value}</div>
       </div>
 
       <div className={STYLES.trackRow}>
         <button
           className={STYLES.btn}
-          onClick={() => onChange(Math.max(0, value - 1))}
+          onClick={() => onChange(Math.max(minValue, value - 1))}
           aria-label="decrease"
         >
           ◀
@@ -108,7 +114,7 @@ export const Slider: React.FC<SliderProps> = ({
 
         <button
           className={STYLES.btn}
-          onClick={() => onChange(Math.min(steps - 1, value + 1))}
+          onClick={() => onChange(Math.min(maxValue, value + 1))}
           aria-label="increase"
         >
           ▶

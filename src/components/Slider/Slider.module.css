@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 8px;
   color: #ddd;
+  min-width: 200px;
 }
 
 .track {
@@ -34,7 +35,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  min-width: 220px;
+  min-width: 150px;
 }
 
 .btn {

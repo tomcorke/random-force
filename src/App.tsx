@@ -6,7 +6,6 @@ import { KoFi } from "./components/KoFi";
 import { Metadata } from "./components/Metadata";
 import { Slot } from "./components/Slot";
 import { COLORS } from "./constants";
-import { SettingsProvider } from "./contexts/SettingsContext";
 import { SettingsPanel } from "./components/SettingsPanel/SettingsPanel";
 
 import * as helmets from "./data/generated/helmets";
@@ -14,20 +13,27 @@ import * as vests from "./data/generated/vests";
 import * as backpacks from "./data/generated/backpacks";
 import * as rigs from "./data/generated/rigs";
 import * as weapons from "./data/generated/weapons";
+import type { ScrollerItem } from "./components/ImageScroller/ImageScroller";
+import useSettings from "./contexts/useSettings";
 
 const itemArrayFromData = (
-  data: Record<string, { image: string; data: { name: string; tier?: number } }>
+  data: Record<
+    string,
+    { image: string; data: { name: string; tier?: number; type?: string } }
+  >
 ) =>
   Object.entries(data).map(([, value]) => ({
     name: value.data.name,
     image: value.image,
     tier: value.data.tier,
+    type: value.data.type,
   }));
 
 const helmetsArray = itemArrayFromData(helmets);
 const vestsArray = itemArrayFromData(vests);
 const backpacksArray = itemArrayFromData(backpacks);
 const rigsArray = itemArrayFromData(rigs);
+const weaponsArray = itemArrayFromData(weapons);
 
 function App() {
   // generic scroller refs (indexed by category)
@@ -38,31 +44,66 @@ function App() {
   };
   const scrollerRefs = useRef<(ScrollerHandle | null)[]>([]);
 
-  // Define categories to render — easy to extend with a new slot
-  const weaponsArray = itemArrayFromData(weapons);
-
   type Category = {
     key: string;
     items: { name: string; image: string; tier?: number }[];
     initialColor?: string;
     variant?: "weapon";
+    selectionFilter?: (item: ScrollerItem) => boolean;
   };
 
+  const { tierBounds, weaponTypeEnabled } = useSettings();
+
   const categories: Category[] = [
-    { key: "helmets", items: helmetsArray, initialColor: COLORS.dfGreen },
-    { key: "vests", items: vestsArray, initialColor: COLORS.dfQualityRare },
+    {
+      key: "helmets",
+      items: helmetsArray,
+      initialColor: COLORS.dfGreen,
+      selectionFilter: (item) =>
+        item.tier === undefined ||
+        (item.tier >= tierBounds.helmets.min &&
+          item.tier <= tierBounds.helmets.max),
+    },
+    {
+      key: "vests",
+      items: vestsArray,
+      initialColor: COLORS.dfQualityRare,
+      selectionFilter: (item) =>
+        item.tier === undefined ||
+        (item.tier >= tierBounds.vests.min &&
+          item.tier <= tierBounds.vests.max),
+    },
     {
       key: "backpacks",
       items: backpacksArray,
       initialColor: COLORS.dfQualityEpic,
+      selectionFilter: (item) =>
+        item.tier === undefined ||
+        (item.tier >= tierBounds.backpacks.min &&
+          item.tier <= tierBounds.backpacks.max),
     },
-    { key: "rigs", items: rigsArray, initialColor: COLORS.dfQualityLegendary },
+    {
+      key: "rigs",
+      items: rigsArray,
+      initialColor: COLORS.dfQualityLegendary,
+      selectionFilter: (item) =>
+        item.tier === undefined ||
+        (item.tier >= tierBounds.rigs.min && item.tier <= tierBounds.rigs.max),
+    },
     // weapons are wide images; mark variant so UI can size accordingly
     {
       key: "weapons",
       items: weaponsArray,
       initialColor: COLORS.dfQualityRare,
       variant: "weapon",
+      selectionFilter: (item) => {
+        console.log(item, weaponTypeEnabled);
+        return (
+          item.type === undefined ||
+          // only show enabled weapon types
+          weaponTypeEnabled[item.type]
+        );
+      },
     },
   ];
 
@@ -74,6 +115,10 @@ function App() {
   const [slotColors, setSlotColors] = useState<string[]>(
     Array(categories.length).fill(neutral)
   );
+
+  const indexHandlersRef = useRef<
+    Record<number, (index: number, item: { tier?: number }) => void>
+  >({});
 
   const mapTierToColor = (tier?: number) => {
     switch (tier) {
@@ -94,14 +139,21 @@ function App() {
     }
   };
 
-  const handleIndexChange =
-    (slotIdx: number) => (_: number, item: { tier?: number }) => {
-      setSlotColors((prev) => {
-        const next = prev.slice();
-        next[slotIdx] = mapTierToColor(item?.tier) ?? next[slotIdx];
-        return next;
-      });
-    };
+  const handleIndexChange = (slotIdx: number) => {
+    if (!indexHandlersRef.current[slotIdx]) {
+      indexHandlersRef.current[slotIdx] = (
+        _: number,
+        item: { tier?: number }
+      ) => {
+        setSlotColors((prev) => {
+          const next = prev.slice();
+          next[slotIdx] = mapTierToColor(item?.tier) ?? next[slotIdx];
+          return next;
+        });
+      };
+    }
+    return indexHandlersRef.current[slotIdx];
+  };
 
   const spinAll = () => {
     const minSpinTime = 3000;
@@ -126,7 +178,7 @@ function App() {
   };
 
   return (
-    <SettingsProvider>
+    <>
       <div className={STYLES.App}>
         <h1>Shotski's Random Delta Force Loadout Spinner</h1>
         <div className={STYLES.row}>
@@ -146,14 +198,16 @@ function App() {
                 onSpinningChange={handleSpinningChange(idx)}
                 // pass variant so ImageScroller can adapt sizing
                 variant={cat.variant}
-                tierKey={cat.key}
+                selectionFilter={cat.selectionFilter}
               />
             </Slot>
           ))}
         </div>
         <div className={STYLES.row}>
           {spinning.some(Boolean) ? (
-            <Button onClick={stopAll}>Stop all</Button>
+            <Button onClick={stopAll}>
+              Let the reels spin, or press to stop now!
+            </Button>
           ) : (
             <Button onClick={spinAll}>Shoot, Loot, and Scoot!</Button>
           )}
@@ -162,7 +216,7 @@ function App() {
       </div>
       <Metadata />
       <KoFi />
-    </SettingsProvider>
+    </>
   );
 }
 

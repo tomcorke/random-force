@@ -5,19 +5,25 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings } from "../../contexts/useSettings";
 import STYLES from "./ImageScroller.module.css";
 import classnames from "classnames";
 import { TierIcon } from "../TierIcon/TierIcon";
+import useAudio from "../../contexts/useAudio";
 
-type ScrollerItem = { name: string; image: string; tier?: number };
+export type ScrollerItem = {
+  name: string;
+  image: string;
+  tier?: number;
+  type?: string;
+};
 
 type ImageScrollerProps = {
   items: ScrollerItem[];
   onIndexChange?: (index: number, item: ScrollerItem) => void;
   onSpinningChange?: (isSpinning: boolean) => void;
   variant?: "weapon";
-  tierKey?: string;
+  selectionFilter?: (item: ScrollerItem) => boolean;
 };
 
 type ImageScrollerHandle = {
@@ -32,7 +38,7 @@ const ImageScrollerImpl = (
     onIndexChange,
     onSpinningChange,
     variant,
-    tierKey,
+    selectionFilter,
   }: ImageScrollerProps,
   ref: React.ForwardedRef<ImageScrollerHandle>
 ) => {
@@ -52,127 +58,26 @@ const ImageScrollerImpl = (
   const slowDownTimeout = useRef<number | null>(null);
   const spinInterval = useRef<number | null>(null);
 
-  // Audio
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const masterGainRef = useRef<GainNode | null>(null);
+  const { instantSpin } = useSettings();
 
-  const ensureAudio = async () => {
-    if (!audioCtxRef.current) {
-      const win = window as unknown as {
-        webkitAudioContext?: unknown;
-        AudioContext?: unknown;
-      };
-      const ctor = (win.AudioContext ||
-        win.webkitAudioContext) as unknown as new (
-        ...args: unknown[]
-      ) => AudioContext;
-      audioCtxRef.current = new ctor();
-      masterGainRef.current = audioCtxRef.current.createGain();
-      masterGainRef.current.gain.value = 0.05;
-      masterGainRef.current.connect(audioCtxRef.current.destination);
-    }
-    if (audioCtxRef.current && audioCtxRef.current.state === "suspended")
-      await audioCtxRef.current.resume();
-  };
-
-  const { soundEnabled, instantSpin } = useSettings();
-
-  const settings = useSettings();
-  const boundsForKey = tierKey ? settings.tierBounds?.[tierKey] : undefined;
-
-  const playTick = async () => {
-    if (!soundEnabled) return;
-    try {
-      await ensureAudio();
-      const ctx = audioCtxRef.current!;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(1.0, ctx.currentTime + 0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
-      g.connect(masterGainRef.current!);
-
-      const osc = ctx.createOscillator();
-      osc.type = "square";
-      osc.frequency.value = 1000 + Math.random() * 300;
-      osc.connect(g);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.08);
-
-      setTimeout(() => {
-        try {
-          osc.disconnect();
-          g.disconnect();
-        } catch {
-          /* ignore */
-        }
-      }, 200);
-    } catch {
-      // ignore audio errors
-    }
-  };
-
-  const playDing = async () => {
-    if (!soundEnabled) return;
-    try {
-      await ensureAudio();
-      const ctx = audioCtxRef.current!;
-      const master = masterGainRef.current!;
-
-      // small bell: two sine oscillators with quick exponential decay
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
-      g.connect(master);
-
-      const o1 = ctx.createOscillator();
-      o1.type = "sine";
-      o1.frequency.value = 880; // fundamental
-      const o2 = ctx.createOscillator();
-      o2.type = "sine";
-      o2.frequency.value = 1320; // octave-ish overtone
-
-      o1.connect(g);
-      o2.connect(g);
-      o1.start();
-      o2.start();
-      o1.stop(ctx.currentTime + 1.1);
-      o2.stop(ctx.currentTime + 1.1);
-
-      setTimeout(() => {
-        try {
-          o1.disconnect();
-          o2.disconnect();
-          g.disconnect();
-        } catch {
-          /* ignore */
-        }
-      }, 1500);
-    } catch {
-      // ignore audio errors
-    }
-  };
+  const { playTick, playDing } = useAudio();
 
   const getRandomIndex = () => Math.floor(Math.random() * imageCount);
 
-  // pick a random index from items whose tier is within bounds (if tierKey provided)
-  const getRandomIndexWithinBounds = () => {
-    if (!boundsForKey) return getRandomIndex();
-    const allowed = items
-      .map((it, idx) => ({ it, idx }))
-      .filter(({ it }) => {
-        const t = Math.max(1, Math.min(6, Math.floor(it.tier ?? 1)));
-        const zeroBased = t - 1;
-        return zeroBased >= boundsForKey.min && zeroBased <= boundsForKey.max;
-      });
+  const getValidRandomIndex = () => {
+    if (!selectionFilter) return getRandomIndex();
+
+    const allowed = items.filter((it) => selectionFilter(it));
     if (allowed.length === 0) return getRandomIndex();
+
     const pick = Math.floor(Math.random() * allowed.length);
-    return allowed[pick].idx;
+    const pickedItem = allowed[pick];
+    return items.indexOf(pickedItem);
   };
 
   const startSpin = (spinDuration: number) => {
     if (isSpinning) return;
-    const chosenIndex = getRandomIndexWithinBounds();
+    const chosenIndex = getValidRandomIndex();
     setTargetIndex(chosenIndex);
     // hide any previous result while spinning
     setShowResult(false);
@@ -256,8 +161,7 @@ const ImageScrollerImpl = (
   };
 
   useEffect(() => {
-    setIsTransitioning(true);
-    if (typeof onIndexChange === "function") {
+    if (onIndexChange) {
       const cur = items[index];
       if (cur) onIndexChange(index, cur);
     }
