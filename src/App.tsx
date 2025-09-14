@@ -198,24 +198,43 @@ function App() {
         <h1>Shotski's Random Delta Force Loadout Spinner</h1>
         <div className={STYLES.row}>
           {categories.map((cat, idx) => (
-            <Slot
-              key={cat.key}
-              color={slotColors[idx]}
-              label={cat.key}
-              variant={cat.variant}
-            >
-              <ImageScroller
-                items={cat.items}
-                ref={(el) => {
-                  scrollerRefs.current[idx] = el;
-                }}
-                onIndexChange={handleIndexChange(idx)}
-                onSpinningChange={handleSpinningChange(idx)}
-                // pass variant so ImageScroller can adapt sizing
+            <div className={STYLES.column} key={cat.key}>
+              <Slot
+                color={slotColors[idx]}
+                label={cat.key}
                 variant={cat.variant}
-                selectionFilter={cat.selectionFilter}
-              />
-            </Slot>
+              >
+                <ImageScroller
+                  items={cat.items}
+                  ref={(el) => {
+                    scrollerRefs.current[idx] = el;
+                  }}
+                  onIndexChange={handleIndexChange(idx)}
+                  onSpinningChange={handleSpinningChange(idx)}
+                  // pass variant so ImageScroller can adapt sizing
+                  variant={cat.variant}
+                  selectionFilter={cat.selectionFilter}
+                />
+              </Slot>
+              <div style={{ marginTop: 8, textAlign: "center" }}>
+                <Button
+                  onClick={() => {
+                    if (spinning[idx]) {
+                      scrollerRefs.current[idx]?.stopImmediate();
+                    } else {
+                      const minSpinTime = 1000;
+                      const maxSpinTime = 3000;
+                      const spinTime =
+                        Math.random() * (maxSpinTime - minSpinTime) +
+                        minSpinTime;
+                      scrollerRefs.current[idx]?.spin(spinTime);
+                    }
+                  }}
+                >
+                  {spinning[idx] ? "stop" : "spin"}
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
         <div className={STYLES.row}>

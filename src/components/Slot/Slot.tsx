@@ -1,8 +1,8 @@
-import type { JSX } from "react";
+import type { ReactNode } from "react";
 import STYLES from "./Slot.module.css";
 
 type SlotProps = {
-  children?: JSX.Element;
+  children?: ReactNode;
   color?: string;
   label?: string;
   variant?: string;
