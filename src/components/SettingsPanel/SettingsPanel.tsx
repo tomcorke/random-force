@@ -2,6 +2,7 @@ import STYLES from "./SettingsPanel.module.css";
 import { useSettings } from "../../contexts/useSettings";
 import { useState } from "react";
 import { Slider } from "../Slider/Slider";
+import { Button } from "../Button";
 
 const WEAPON_TYPE_LABELS: Record<string, string> = {
   rifle: "Assault Rifle",
@@ -16,8 +17,14 @@ export const SettingsPanel = () => {
 
   const [expanded, setExpanded] = useState(false);
 
-  const { tierBounds, setTierBounds, weaponTypeEnabled, setWeaponTypeEnabled } =
-    useSettings();
+  const {
+    tierBounds,
+    setTierBounds,
+    weaponTypeEnabled,
+    setWeaponTypeEnabled,
+    mapEnabled,
+    setMapEnabled,
+  } = useSettings();
 
   const armourCategories = ["helmets", "vests", "rigs", "backpacks"];
   const weaponTypes: string[] = [
@@ -46,6 +53,30 @@ export const SettingsPanel = () => {
     throw Error("Missing weapon types in settings");
   }
 
+  const maps: string[] = [
+    "Zero Dam",
+    "Layali Grove",
+    "Brakkesh",
+    "Space City",
+    "Tide Prison",
+  ];
+
+  if (maps.some((t) => !Object.keys(mapEnabled).includes(t))) {
+    console.error(
+      "Unexpected maps",
+      maps.filter((t) => !Object.keys(mapEnabled).includes(t)),
+      Object.keys(mapEnabled)
+    );
+    throw Error("Unexpected maps");
+  }
+  if (Object.keys(mapEnabled).some((t) => !maps.includes(t))) {
+    console.error(
+      "Missing maps in settings",
+      Object.keys(mapEnabled).filter((t) => !maps.includes(t))
+    );
+    throw Error("Missing maps in settings");
+  }
+
   const setMin = (idx: number, v: number) => {
     const key = armourCategories[idx];
     const cur = tierBounds[key] || { min: 1, max: 6 };
@@ -58,6 +89,44 @@ export const SettingsPanel = () => {
     const cur = tierBounds[key] || { min: 1, max: 6 };
     const next = { min: cur.min, max: Math.max(v, cur.min) };
     setTierBounds(key, next);
+  };
+
+  const loadPreset = (preset: "easy" | "normal" | "fullSend") => {
+    if (preset === "easy") {
+      setTierBounds("helmets", { min: 1, max: 4 });
+      setTierBounds("vests", { min: 1, max: 4 });
+      setTierBounds("rigs", { min: 1, max: 4 });
+      setTierBounds("backpacks", { min: 1, max: 4 });
+      Object.keys(weaponTypeEnabled).forEach((type) =>
+        setWeaponTypeEnabled(type, true)
+      );
+      setWeaponTypeEnabled("sniper", false);
+      setWeaponTypeEnabled("special", false);
+      Object.keys(mapEnabled).forEach((map) => setMapEnabled(map, true));
+      setMapEnabled("Brakkesh", false);
+      setMapEnabled("Space City", false);
+      setMapEnabled("Tide Prison", false);
+    } else if (preset === "normal") {
+      setTierBounds("helmets", { min: 3, max: 5 });
+      setTierBounds("vests", { min: 3, max: 5 });
+      setTierBounds("rigs", { min: 3, max: 5 });
+      setTierBounds("backpacks", { min: 3, max: 5 });
+      Object.keys(weaponTypeEnabled).forEach((type) =>
+        setWeaponTypeEnabled(type, true)
+      );
+      Object.keys(mapEnabled).forEach((map) => setMapEnabled(map, true));
+      setMapEnabled("Tide Prison", false);
+    } else if (preset === "fullSend") {
+      setTierBounds("helmets", { min: 5, max: 6 });
+      setTierBounds("vests", { min: 5, max: 6 });
+      setTierBounds("rigs", { min: 5, max: 6 });
+      setTierBounds("backpacks", { min: 5, max: 6 });
+      Object.keys(weaponTypeEnabled).forEach((type) =>
+        setWeaponTypeEnabled(type, true)
+      );
+      setWeaponTypeEnabled("pistol", false);
+      Object.keys(mapEnabled).forEach((map) => setMapEnabled(map, true));
+    }
   };
 
   return (
@@ -93,7 +162,28 @@ export const SettingsPanel = () => {
         </div>
 
         <hr />
-        <div className={STYLES.columns}>
+
+        <div className={STYLES.rowWide}>
+          <div>
+            <div className={STYLES.sectionNote}>Load Settings Preset</div>
+            <div className={STYLES.column}>
+              <Button buttonStyle={"small"} onClick={() => loadPreset("easy")}>
+                Easy
+              </Button>
+              <Button
+                buttonStyle={"small"}
+                onClick={() => loadPreset("normal")}
+              >
+                Normal
+              </Button>
+              <Button
+                buttonStyle={"small"}
+                onClick={() => loadPreset("fullSend")}
+              >
+                Full Send
+              </Button>
+            </div>
+          </div>
           <div>
             <div className={STYLES.sectionNote}>Tier bounds per slot</div>
             {armourCategories.map((cat, idx) => (
@@ -124,9 +214,9 @@ export const SettingsPanel = () => {
           </div>
           <div>
             <div className={STYLES.sectionNote}>Weapon types</div>
-            <div className={STYLES.weaponTypes}>
+            <div className={STYLES.checkboxVerticalList}>
               {weaponTypes.map((type) => (
-                <label key={type} className={STYLES.weaponLabel}>
+                <label key={type} className={STYLES.label}>
                   <input
                     type="checkbox"
                     checked={Boolean(weaponTypeEnabled[type])}
@@ -138,6 +228,21 @@ export const SettingsPanel = () => {
                     {WEAPON_TYPE_LABELS[type] ??
                       type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className={STYLES.sectionNote}>Maps</div>
+            <div className={STYLES.checkboxVerticalList}>
+              {maps.map((map) => (
+                <label key={map} className={STYLES.label}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(mapEnabled[map])}
+                    onChange={(e) => setMapEnabled(map, e.target.checked)}
+                  />
+                  <span style={{ textTransform: "none" }}>{map}</span>
                 </label>
               ))}
             </div>

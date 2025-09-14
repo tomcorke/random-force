@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import STYLES from "./Slider.module.css";
 import { COLORS } from "../../constants";
+import { Button } from "../Button";
 
 type SliderProps = {
   startValue?: number;
@@ -82,13 +83,13 @@ export const Slider: React.FC<SliderProps> = ({
       </div>
 
       <div className={STYLES.trackRow}>
-        <button
-          className={STYLES.btn}
+        <Button
+          buttonStyle="small"
           onClick={() => onChange(Math.max(minValue, value - 1))}
           aria-label="decrease"
         >
           ◀
-        </button>
+        </Button>
 
         <div style={{ flex: 1 }}>
           <div
@@ -112,13 +113,13 @@ export const Slider: React.FC<SliderProps> = ({
           </div>
         </div>
 
-        <button
-          className={STYLES.btn}
+        <Button
+          buttonStyle="small"
           onClick={() => onChange(Math.min(maxValue, value + 1))}
           aria-label="increase"
         >
           ▶
-        </button>
+        </Button>
       </div>
     </div>
   );

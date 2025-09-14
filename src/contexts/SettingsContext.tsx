@@ -1,11 +1,15 @@
 import React, { createContext } from "react";
-import * as weapons from "../data/generated/weapons";
 import { useStoredState } from "../hooks/useStoredState";
 import z from "zod";
+import { maps, weapons } from "../data/generated";
 
 // derive weapon types from generated data and enable them by default
 const weaponTypeSet = new Set<string>(
   Array.from(Object.values(weapons).map((w) => w.data.type))
+);
+
+const mapSet = new Set<string>(
+  Array.from(Object.values(maps).map((w) => w.data.name)).flat()
 );
 
 const defaultWeaponTypeEnabled = Array.from(weaponTypeSet).reduce<
@@ -14,6 +18,14 @@ const defaultWeaponTypeEnabled = Array.from(weaponTypeSet).reduce<
   acc[t] = true;
   return acc;
 }, {});
+
+const defaultMapEnabled = Array.from(mapSet).reduce<Record<string, boolean>>(
+  (acc, t) => {
+    acc[t] = true;
+    return acc;
+  },
+  {}
+);
 
 type Settings = {
   soundEnabled: boolean;
@@ -24,6 +36,8 @@ type Settings = {
   setTierBounds: (key: string, bounds: { min: number; max: number }) => void;
   weaponTypeEnabled: Record<string, boolean>;
   setWeaponTypeEnabled: (type: string, enabled: boolean) => void;
+  mapEnabled: Record<string, boolean>;
+  setMapEnabled: (map: string, enabled: boolean) => void;
 };
 
 const SettingsContext = createContext<Settings | undefined>(undefined);
@@ -67,11 +81,25 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     setWeaponTypeEnabledState(defaultWeaponTypeEnabled);
   }
 
+  const [mapEnabled, setMapEnabledState] = useStoredState(
+    "settings.mapEnabled",
+    defaultMapEnabled,
+    z.record(z.string(), z.boolean())
+  );
+
+  if (mapSet.size !== Object.keys(mapEnabled).length) {
+    // maps have changed since last run; reset to default
+    setMapEnabledState(defaultMapEnabled);
+  }
+
   const setTierBounds = (key: string, bounds: { min: number; max: number }) =>
     setTierBoundsState((prev) => ({ ...prev, [key]: bounds }));
 
   const setWeaponTypeEnabled = (type: string, enabled: boolean) =>
     setWeaponTypeEnabledState((prev) => ({ ...prev, [type]: enabled }));
+
+  const setMapEnabled = (map: string, enabled: boolean) =>
+    setMapEnabledState((prev) => ({ ...prev, [map]: enabled }));
 
   return (
     <SettingsContext.Provider
@@ -84,6 +112,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         setTierBounds,
         weaponTypeEnabled,
         setWeaponTypeEnabled,
+        mapEnabled,
+        setMapEnabled,
       }}
     >
       {children}

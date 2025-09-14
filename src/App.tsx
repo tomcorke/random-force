@@ -70,7 +70,7 @@ function App() {
     selectionFilter?: (item: ScrollerItem) => boolean;
   };
 
-  const { tierBounds, weaponTypeEnabled } = useSettings();
+  const { tierBounds, weaponTypeEnabled, mapEnabled } = useSettings();
 
   const categories: Category[] = [
     {
@@ -79,7 +79,12 @@ function App() {
       initialColor: COLORS.dfQualityLegendary,
       variant: "operator",
     },
-    { key: "maps", items: mapsArray, initialColor: COLORS.dfQualityEpic },
+    {
+      key: "maps",
+      items: mapsArray,
+      initialColor: COLORS.dfQualityEpic,
+      selectionFilter: (item) => mapEnabled[item.name],
+    },
     // weapons are wide images; mark variant so UI can size accordingly
     {
       key: "weapons",
@@ -256,10 +261,12 @@ function App() {
         <div className={STYLES.row}>
           {spinning.some(Boolean) ? (
             <Button onClick={stopAll}>
-              Let the reels spin, or press to stop now!
+              Let the wheels spin, or press to stop now!
             </Button>
           ) : (
-            <Button onClick={spinAll}>Shoot, Loot, and Scoot!</Button>
+            <Button onClick={spinAll}>
+              Shoot, Loot, and Scoot! Spin the wheels!
+            </Button>
           )}
         </div>
         <SettingsPanel />

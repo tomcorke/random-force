@@ -1,6 +1,7 @@
 .App {
   --df-green: #10f898;
   --df-quality-common: #c4c4c2;
+  --df-grey: var(--df-quality-common);
   /* uncommon, rare, epic, legendary, exotic */
   /* green, blue, purple, orange, red */
   --df-quality-uncommon: #2aca96;
@@ -25,6 +26,10 @@
   h6 {
     margin: 0;
     padding: 0;
+  }
+
+  h1 {
+    margin-bottom: 1em;
   }
 
   .column {

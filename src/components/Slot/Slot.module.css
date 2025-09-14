@@ -29,13 +29,22 @@
     /* linear gradient to give the slot a "shiny" appearance */
     /* with relatively hard specular edges */
     background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(255, 255, 255, 0.05) 25%,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(0, 0, 0, 0.05) 75%,
-      rgba(0, 0, 0, 0.15) 100%
-    );
+        180deg,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.8) 5%,
+        transparent 20%
+      ),
+      linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.8) 5%,
+        transparent 20%
+      ),
+      radial-gradient(
+        circle at 120% 90%,
+        rgba(255, 255, 255, 0.5) 0,
+        transparent 20%
+      );
   }
 }
 

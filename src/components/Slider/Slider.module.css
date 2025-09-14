@@ -34,28 +34,20 @@
 .trackRow {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 10px;
   min-width: 150px;
-}
-
-.btn {
-  background: linear-gradient(180deg, #333, #111);
-  color: #ddd;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 6px 8px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .handle {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 26px;
+  width: 12px;
   height: 26px;
-  border-radius: 6px;
-  border: 6px groove rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  border: 3px outset rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.6);
+  cursor: grab;
 }
 
 .labelRow {
