@@ -46,5 +46,23 @@
     "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10023.png",
     "name": "Toxik",
     "role": "support"
+  },
+  {
+    "src": "./images/nox.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10033.png",
+    "name": "Nox",
+    "role": "scout"
+  },
+  {
+    "src": "./images/tempest.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10028.png",
+    "name": "Tempest",
+    "role": "assault"
+  },
+  {
+    "src": "./images/sineva.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10038.png",
+    "name": "Sineva",
+    "role": "project"
   }
 ]

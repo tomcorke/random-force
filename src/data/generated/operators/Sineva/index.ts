@@ -1,7 +1,7 @@
 const data = {
-  "src": "./images/uluru.png",
+  "src": "./images/sineva.png",
   "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10038.png",
-  "name": "Uluru",
+  "name": "Sineva",
   "role": "project"
 };
 

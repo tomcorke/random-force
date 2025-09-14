@@ -35,6 +35,16 @@
     "tier": 5
   },
   {
+    "name": "GN Heavy NV Helmet",
+    "src": "./images/nvg.png",
+    "tier": 5
+  },
+  {
+    "name": "GN Endurance Heavy NV Helmet",
+    "src": "./images/cheap_nvg.png",
+    "tier": 5
+  },
+  {
     "name": "D6 Tactical Helmet",
     "src": "https://deltaforcewiki.vasdgame.com/playerhub/40001/object/p_11010004001.png",
     "tier": 4

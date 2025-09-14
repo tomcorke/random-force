@@ -1,7 +1,7 @@
 const data = {
-  "src": "./images/vyron.png",
+  "src": "./images/tempest.png",
   "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10028.png",
-  "name": "Vyron",
+  "name": "Tempest",
   "role": "assault"
 };
 

@@ -4,6 +4,7 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  type JSX,
 } from "react";
 import { useSettings } from "../../contexts/useSettings";
 import STYLES from "./ImageScroller.module.css";
@@ -16,6 +17,7 @@ export type ScrollerItem = {
   image: string;
   tier?: number;
   type?: string;
+  icon?: string;
 };
 
 type ImageScrollerProps = {
@@ -45,7 +47,6 @@ const ImageScrollerImpl = (
   const imageCount = items.length;
   const isWeapon = variant === "weapon";
   const isOperator = variant === "operator";
-  const showResultTier = !isWeapon && !isOperator;
   const IMAGE_SIZE = isWeapon ? 200 : 200;
   const angleStep = 8; // degrees per item on the wheel
   const spacing = IMAGE_SIZE + 10; // outer size includes padding
@@ -241,6 +242,13 @@ const ImageScrollerImpl = (
     stopImmediate,
   }));
 
+  let overlayIcon: JSX.Element | null = null;
+  if (isOperator) {
+    overlayIcon = <img className={STYLES.classIcon} src={items[index]?.icon} />;
+  } else if (!isWeapon) {
+    overlayIcon = <TierIcon tier={toTierUnion(items[index]?.tier)} />;
+  }
+
   return (
     <div
       className={classnames(
@@ -280,10 +288,8 @@ const ImageScrollerImpl = (
       <div
         className={classnames(STYLES.resultOverlay, showResult && STYLES.show)}
       >
-        {showResultTier ? (
-          <div className={STYLES.resultTier}>
-            <TierIcon tier={toTierUnion(items[index]?.tier)} />
-          </div>
+        {overlayIcon ? (
+          <div className={STYLES.overlayIcon}>{overlayIcon}</div>
         ) : null}
         <div className={STYLES.resultName}>{items[index]?.name}</div>
       </div>

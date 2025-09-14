@@ -129,9 +129,17 @@
   margin-right: auto;
 }
 
-.resultTier {
+.overlayIcon {
   position: absolute;
   right: 8px;
   top: 48px;
   pointer-events: none;
+}
+
+.classIcon {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: 9px;
+  right: 10px;
 }

@@ -1,7 +1,7 @@
 const data = {
-  "src": "./images/luna.png",
+  "src": "./images/nox.png",
   "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10033.png",
-  "name": "Luna",
+  "name": "Nox",
   "role": "scout"
 };
 

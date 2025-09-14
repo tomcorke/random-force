@@ -6,3 +6,6 @@ export * as Shepherd from './Shepherd';
 export * as D_wolf from './D_wolf';
 export * as Uluru from './Uluru';
 export * as Toxik from './Toxik';
+export * as Nox from './Nox';
+export * as Tempest from './Tempest';
+export * as Sineva from './Sineva';

@@ -20,7 +20,11 @@ import { operators } from "./data/generated";
 const itemArrayFromData = (
   data: Record<
     string,
-    { image: string; data: { name: string; tier?: number; type?: string } }
+    {
+      image: string;
+      icon?: string;
+      data: { name: string; tier?: number; type?: string };
+    }
   >
 ) => {
   const array = Object.entries(data).map(([, value]) => ({
@@ -28,11 +32,13 @@ const itemArrayFromData = (
     image: value.image,
     tier: value.data.tier,
     type: value.data.type,
+    icon: value.icon,
   }));
-  // Duplicate items to make array 2x as long
-  const duplicated = [...array, ...array];
   // Shuffle
-  return duplicated.sort(() => Math.random() - 0.5);
+  // Duplicate items to make array 2x as long, so that it can spin more smoothly
+  const shuffled = array.sort(() => Math.random() - 0.5);
+  const duplicated = [...shuffled, ...shuffled];
+  return duplicated;
 };
 
 const operatorsArray = itemArrayFromData(operators);

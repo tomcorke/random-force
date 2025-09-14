@@ -5,6 +5,8 @@ export * as Mask_1_Iron_Helmet from './Mask_1_Iron_Helmet';
 export * as H09_Anti_Riot_Helmet from './H09_Anti_Riot_Helmet';
 export * as DICH_1_Tactical_Helmet from './DICH_1_Tactical_Helmet';
 export * as GN_Heavy_Helmet from './GN_Heavy_Helmet';
+export * as GN_Heavy_NV_Helmet from './GN_Heavy_NV_Helmet';
+export * as GN_Endurance_Heavy_NV_Helmet from './GN_Endurance_Heavy_NV_Helmet';
 export * as D6_Tactical_Helmet from './D6_Tactical_Helmet';
 export * as MHS_Tactical_Helmet from './MHS_Tactical_Helmet';
 export * as DICH_Training_Helmet from './DICH_Training_Helmet';

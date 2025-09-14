@@ -7,4 +7,6 @@ const data = {
 
 import image from './image.png';
 
-export { data, image };
+import icon from './icon.png';
+
+export { data, image, icon };
