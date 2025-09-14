@@ -1,4 +1,5 @@
 import React, { createContext, useRef } from "react";
+import useSettings from "./useSettings";
 
 type AudioApi = {
   playTick: () => Promise<void>;
@@ -12,6 +13,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
+
+  const { soundEnabled } = useSettings();
 
   const ensureAudio = async () => {
     if (!audioCtxRef.current) {
@@ -33,6 +36,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const playTick = async () => {
+    if (!soundEnabled) return;
     try {
       await ensureAudio();
       const ctx = audioCtxRef.current!;
@@ -63,6 +67,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const playDing = async () => {
+    if (!soundEnabled) return;
     try {
       await ensureAudio();
       const ctx = audioCtxRef.current!;
