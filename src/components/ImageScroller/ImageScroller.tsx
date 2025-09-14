@@ -216,12 +216,13 @@ const ImageScrollerImpl = (
       }
     }, speed);
 
-  const finalTarget = chosenIndex;
-  spinTimeout.current = window.setTimeout(() => {
+    const finalTarget = chosenIndex;
+    spinTimeout.current = window.setTimeout(() => {
       if (spinInterval.current)
         window.clearInterval(spinInterval.current as number);
       let slowCurrent = current;
-  const steps = ((finalTarget - slowCurrent + imageCount) % imageCount) as number;
+      const steps = ((finalTarget - slowCurrent + imageCount) %
+        imageCount) as number;
       const slowSteps = steps + imageCount * 2; // extra cycles
       let slowStep = 0;
       let slowInterval = 80;
