@@ -152,8 +152,8 @@ function App() {
   };
 
   const spinAll = () => {
-    const minSpinTime = 3000;
-    const maxSpinTime = 10000;
+    const minSpinTime = 1000;
+    const maxSpinTime = 5000;
     categories.forEach((_, i) => {
       const spinTime =
         Math.random() * (maxSpinTime - minSpinTime) + minSpinTime;

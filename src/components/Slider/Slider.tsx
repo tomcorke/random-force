@@ -10,7 +10,7 @@ type SliderProps = {
   label?: string;
 };
 
-const tierColor = (step: number) => {
+const tierColor = (value: number) => {
   // map 0..(n-1) to tier colours roughly (1..6)
   const mapping = [
     COLORS.dfQualityCommon,
@@ -20,7 +20,7 @@ const tierColor = (step: number) => {
     COLORS.dfQualityLegendary,
     COLORS.dfQualityExotic,
   ];
-  return mapping[Math.max(0, Math.min(mapping.length - 1, step))];
+  return mapping[Math.max(0, Math.min(mapping.length - 1, value - 1))];
 };
 
 export const Slider: React.FC<SliderProps> = ({
