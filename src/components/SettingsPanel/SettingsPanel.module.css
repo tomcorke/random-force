@@ -7,6 +7,28 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
 }
 
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px 8px;
+  background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  min-width: 450px;
+}
+
+.title {
+  font-size: 14px;
+  color: #ddd;
+}
+
+.chev {
+  font-size: 14px;
+  color: #bbb;
+}
+
 .SettingsPanel h3 {
   margin: 0 0 8px 0;
   text-align: center;
@@ -27,3 +49,9 @@
   width: 18px;
   height: 18px;
 }
+
+.SettingsPanel:not(.expanded) > .body {
+  display: none;
+}
+
+/* expanded state handled by showing .body when present */
