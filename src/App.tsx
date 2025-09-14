@@ -96,14 +96,10 @@ function App() {
       items: weaponsArray,
       initialColor: COLORS.dfQualityRare,
       variant: "weapon",
-      selectionFilter: (item) => {
-        console.log(item, weaponTypeEnabled);
-        return (
-          item.type === undefined ||
-          // only show enabled weapon types
-          weaponTypeEnabled[item.type]
-        );
-      },
+      selectionFilter: (item) =>
+        item.type === undefined ||
+        // only show enabled weapon types
+        weaponTypeEnabled[item.type],
     },
   ];
 
