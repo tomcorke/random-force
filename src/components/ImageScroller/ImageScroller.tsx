@@ -1,191 +1,384 @@
-import {
+import React, {
   useEffect,
   useRef,
   useState,
   forwardRef,
   useImperativeHandle,
 } from "react";
+import { useSettings } from "../../contexts/SettingsContext";
 import STYLES from "./ImageScroller.module.css";
 import classnames from "classnames";
+import { TierIcon } from "../TierIcon/TierIcon";
 
-type ScrollerItem = { name: string; image: string };
+type ScrollerItem = { name: string; image: string; tier?: number };
 
 type ImageScrollerProps = {
   items: ScrollerItem[];
+  onIndexChange?: (index: number, item: ScrollerItem) => void;
+  onSpinningChange?: (isSpinning: boolean) => void;
+  variant?: "weapon";
+  tierKey?: string;
 };
 
-export const ImageScroller = forwardRef<
-  { spin: (time: number) => void },
-  ImageScrollerProps
->(({ items }, ref) => {
-  const imageArray = items.map((item) => (
-    <div className={STYLES.image} key={item.name}>
-      <img src={item.image} />
-    </div>
-  ));
+type ImageScrollerHandle = {
+  spin: (time: number) => void;
+  showItem: (idx: number) => void;
+  stopImmediate: () => void;
+};
 
-  const OVERLAP_COUNT = 3;
-  const scrollOverlapHead = imageArray.slice(0 - OVERLAP_COUNT);
-  const scrollOverlapTail = imageArray.slice(0, OVERLAP_COUNT);
+const ImageScrollerImpl = (
+  {
+    items,
+    onIndexChange,
+    onSpinningChange,
+    variant,
+    tierKey,
+  }: ImageScrollerProps,
+  ref: React.ForwardedRef<ImageScrollerHandle>
+) => {
   const imageCount = items.length;
-  const IMAGE_SIZE = 200;
+  const isWeapon = variant === "weapon";
+  const IMAGE_SIZE = isWeapon ? 200 : 200;
+  const angleStep = 8; // degrees per item on the wheel
+  const spacing = IMAGE_SIZE + 10; // outer size includes padding
 
-  // State for slot machine
   const [isSpinning, setIsSpinning] = useState(false);
-  const [index, setIndex] = useState(0); // current index
-  const [targetIndex, setTargetIndex] = useState<number | null>(null); // where to stop
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(true);
-  const spinTimeout = useRef<NodeJS.Timeout | null>(null);
-  const slowDownTimeout = useRef<NodeJS.Timeout | null>(null);
-  const spinInterval = useRef<NodeJS.Timeout | null>(null);
-  const [transitionDuration, setTransitionDuration] = useState(0.4); // seconds
+  const [showResult, setShowResult] = useState(false);
 
-  // Helper to get a random index
+  const spinTimeout = useRef<number | null>(null);
+  const slowDownTimeout = useRef<number | null>(null);
+  const spinInterval = useRef<number | null>(null);
+
+  // Audio
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const masterGainRef = useRef<GainNode | null>(null);
+
+  const ensureAudio = async () => {
+    if (!audioCtxRef.current) {
+      const win = window as unknown as {
+        webkitAudioContext?: unknown;
+        AudioContext?: unknown;
+      };
+      const ctor = (win.AudioContext ||
+        win.webkitAudioContext) as unknown as new (
+        ...args: unknown[]
+      ) => AudioContext;
+      audioCtxRef.current = new ctor();
+      masterGainRef.current = audioCtxRef.current.createGain();
+      masterGainRef.current.gain.value = 0.05;
+      masterGainRef.current.connect(audioCtxRef.current.destination);
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === "suspended")
+      await audioCtxRef.current.resume();
+  };
+
+  const { soundEnabled, instantSpin } = useSettings();
+
+  const settings = useSettings();
+  const boundsForKey = tierKey ? settings.tierBounds?.[tierKey] : undefined;
+
+  const playTick = async () => {
+    if (!soundEnabled) return;
+    try {
+      await ensureAudio();
+      const ctx = audioCtxRef.current!;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(1.0, ctx.currentTime + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+      g.connect(masterGainRef.current!);
+
+      const osc = ctx.createOscillator();
+      osc.type = "square";
+      osc.frequency.value = 1000 + Math.random() * 300;
+      osc.connect(g);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+
+      setTimeout(() => {
+        try {
+          osc.disconnect();
+          g.disconnect();
+        } catch {
+          /* ignore */
+        }
+      }, 200);
+    } catch {
+      // ignore audio errors
+    }
+  };
+
+  const playDing = async () => {
+    if (!soundEnabled) return;
+    try {
+      await ensureAudio();
+      const ctx = audioCtxRef.current!;
+      const master = masterGainRef.current!;
+
+      // small bell: two sine oscillators with quick exponential decay
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+      g.connect(master);
+
+      const o1 = ctx.createOscillator();
+      o1.type = "sine";
+      o1.frequency.value = 880; // fundamental
+      const o2 = ctx.createOscillator();
+      o2.type = "sine";
+      o2.frequency.value = 1320; // octave-ish overtone
+
+      o1.connect(g);
+      o2.connect(g);
+      o1.start();
+      o2.start();
+      o1.stop(ctx.currentTime + 1.1);
+      o2.stop(ctx.currentTime + 1.1);
+
+      setTimeout(() => {
+        try {
+          o1.disconnect();
+          o2.disconnect();
+          g.disconnect();
+        } catch {
+          /* ignore */
+        }
+      }, 1500);
+    } catch {
+      // ignore audio errors
+    }
+  };
+
   const getRandomIndex = () => Math.floor(Math.random() * imageCount);
 
-  // Start spinning
+  // pick a random index from items whose tier is within bounds (if tierKey provided)
+  const getRandomIndexWithinBounds = () => {
+    if (!boundsForKey) return getRandomIndex();
+    const allowed = items
+      .map((it, idx) => ({ it, idx }))
+      .filter(({ it }) => {
+        const t = Math.max(1, Math.min(6, Math.floor(it.tier ?? 1)));
+        const zeroBased = t - 1;
+        return zeroBased >= boundsForKey.min && zeroBased <= boundsForKey.max;
+      });
+    if (allowed.length === 0) return getRandomIndex();
+    const pick = Math.floor(Math.random() * allowed.length);
+    return allowed[pick].idx;
+  };
+
   const startSpin = (spinDuration: number) => {
     if (isSpinning) return;
-    const chosenIndex = getRandomIndex();
+    const chosenIndex = getRandomIndexWithinBounds();
     setTargetIndex(chosenIndex);
-    setIsSpinning(true);
+    // hide any previous result while spinning
+    setShowResult(false);
 
-    // Fast spin
     let current = index;
     const speed = 30; // ms per frame
-    const interval = speed;
-    // const slowDownDuration = 2000; // 2 seconds to slow down
 
-    if (spinInterval.current) clearInterval(spinInterval.current);
-    if (spinTimeout.current) clearTimeout(spinTimeout.current);
-    if (slowDownTimeout.current) clearTimeout(slowDownTimeout.current);
+    if (spinInterval.current)
+      window.clearInterval(spinInterval.current as number);
+    if (spinTimeout.current) window.clearTimeout(spinTimeout.current as number);
+    if (slowDownTimeout.current)
+      window.clearInterval(slowDownTimeout.current as number);
 
-    // Fast spin interval
-    spinInterval.current = setInterval(() => {
-      // If wrapping from last to first, disable transition for instant jump
+    // If instantSpin is enabled, skip animation and jump to the final index immediately
+    if (instantSpin) {
+      setIndex(chosenIndex);
+      setTargetIndex(null);
+      setIsSpinning(false);
+      // do not notify parent that a spin started (instant)
+      playDing();
+      setShowResult(true);
+      return;
+    }
+
+    // animated spin: notify parent and set spinning state
+    setIsSpinning(true);
+    if (typeof onSpinningChange === "function") onSpinningChange(true);
+
+    spinInterval.current = window.setInterval(() => {
       if (current === imageCount - 1) {
         setIsTransitioning(false);
-        setScrollPosition(0);
         current = 0;
-        // Next tick, re-enable transition
+        setIndex(current);
+        playTick();
         setTimeout(() => setIsTransitioning(true), 10);
       } else {
         current = (current + 1) % imageCount;
         setIsTransitioning(true);
-        setTransitionDuration(0.4);
-        setScrollPosition(-(current * IMAGE_SIZE));
+        setIndex(current);
+        playTick();
       }
-      setIndex(current);
-    }, interval);
+    }, speed);
 
-    // After spinDuration, start slowing down
-    spinTimeout.current = setTimeout(() => {
-      if (spinInterval.current) clearInterval(spinInterval.current);
+    spinTimeout.current = window.setTimeout(() => {
+      if (spinInterval.current)
+        window.clearInterval(spinInterval.current as number);
       let slowCurrent = current;
       const steps =
         ((targetIndex !== null ? targetIndex : 0) - slowCurrent + imageCount) %
         imageCount;
-      const slowSteps = steps + imageCount * 2; // always at least 2 full cycles for drama
+      const slowSteps = steps + imageCount * 2; // extra cycles
       let slowStep = 0;
       let slowInterval = 80;
-      slowDownTimeout.current = setInterval(() => {
-        // If wrapping from last to first, disable transition for instant jump
+      slowDownTimeout.current = window.setInterval(() => {
         if (slowCurrent === imageCount - 1) {
           setIsTransitioning(false);
-          setScrollPosition(0);
           slowCurrent = 0;
+          setIndex(slowCurrent);
+          playTick();
           setTimeout(() => setIsTransitioning(true), 10);
         } else {
           slowCurrent = (slowCurrent + 1) % imageCount;
           setIsTransitioning(true);
-          // If this is the final step, use a long transition
-          if (slowStep === slowSteps - 1) {
-            setTransitionDuration(1.5); // 1.5s for overscroll
-          } else {
-            setTransitionDuration(0.4);
-          }
-          setScrollPosition(-(slowCurrent * IMAGE_SIZE));
+          setIndex(slowCurrent);
+          playTick();
         }
-        setIndex(slowCurrent);
         slowStep++;
-        // Gradually increase interval for slow-down effect
         if (slowInterval < 300) slowInterval += 10;
         if (slowStep >= slowSteps) {
-          if (slowDownTimeout.current) clearInterval(slowDownTimeout.current);
+          if (slowDownTimeout.current)
+            window.clearInterval(slowDownTimeout.current as number);
+          // play a ding when the wheel finishes
+          playDing();
           setIsSpinning(false);
+          if (typeof onSpinningChange === "function") onSpinningChange(false);
+          // show the result overlay briefly
+          setShowResult(true);
         }
-      }, slowInterval);
-    }, spinDuration);
+      }, slowInterval as number);
+    }, spinDuration as number);
   };
 
-  // If not spinning, always show the current index
   useEffect(() => {
     setIsTransitioning(true);
-    setScrollPosition(-(index * IMAGE_SIZE));
-  }, [index]);
+    if (typeof onIndexChange === "function") {
+      const cur = items[index];
+      if (cur) onIndexChange(index, cur);
+    }
+  }, [index, items, onIndexChange]);
 
-  // Clean up intervals on unmount
+  const itemTransform = (itemIdx: number) => {
+    let offset = (itemIdx - index + imageCount) % imageCount;
+    if (offset > imageCount / 2) offset -= imageCount;
+
+    const rotateX = offset * angleStep;
+    const translateY = offset * spacing;
+    const translateZ = -Math.abs(offset) * 4;
+
+    return `translateY(${translateY}px) rotateX(${rotateX}deg) translateZ(${translateZ}px)`;
+  };
+
+  // Convert numeric tier to the TierIcon expected union type (1..6)
+  const toTierUnion = (n?: number) => {
+    const t = Math.max(1, Math.min(6, Math.floor(n ?? 1)));
+    return t as 1 | 2 | 3 | 4 | 5 | 6;
+  };
+
   useEffect(() => {
     return () => {
-      if (spinInterval.current) clearInterval(spinInterval.current);
-      if (spinTimeout.current) clearTimeout(spinTimeout.current);
-      if (slowDownTimeout.current) clearInterval(slowDownTimeout.current);
+      if (spinInterval.current)
+        window.clearInterval(spinInterval.current as number);
+      if (spinTimeout.current)
+        window.clearTimeout(spinTimeout.current as number);
+      if (slowDownTimeout.current)
+        window.clearInterval(slowDownTimeout.current as number);
     };
   }, []);
 
-  // Optional: instantly show a pre-determined item (no spin)
   const showItem = (itemIdx: number) => {
-    if (spinInterval.current) clearInterval(spinInterval.current);
-    if (spinTimeout.current) clearTimeout(spinTimeout.current);
-    if (slowDownTimeout.current) clearInterval(slowDownTimeout.current);
+    if (spinInterval.current)
+      window.clearInterval(spinInterval.current as number);
+    if (spinTimeout.current) window.clearTimeout(spinTimeout.current as number);
+    if (slowDownTimeout.current)
+      window.clearInterval(slowDownTimeout.current as number);
     setIsSpinning(false);
+    if (typeof onSpinningChange === "function") onSpinningChange(false);
     setTargetIndex(itemIdx);
     setIndex(itemIdx);
-    setScrollPosition(-(itemIdx * IMAGE_SIZE));
+    // small bell to signal the manual selection
+    playDing();
+    setShowResult(true);
   };
 
-  // Expose spin method to parent via ref
+  const stopImmediate = () => {
+    // clear any running timers/intervals
+    if (spinInterval.current)
+      window.clearInterval(spinInterval.current as number);
+    if (spinTimeout.current) window.clearTimeout(spinTimeout.current as number);
+    if (slowDownTimeout.current)
+      window.clearInterval(slowDownTimeout.current as number);
+
+    // jump to the target index if set, otherwise keep current
+    const finalIdx = targetIndex !== null ? targetIndex : index;
+    setIndex(finalIdx);
+    setTargetIndex(null);
+    setIsSpinning(false);
+    if (typeof onSpinningChange === "function") onSpinningChange(false);
+    // notify parent of index change
+    if (typeof onIndexChange === "function")
+      onIndexChange(finalIdx, items[finalIdx]);
+    // play ding and show result
+    playDing();
+    setShowResult(true);
+  };
+
   useImperativeHandle(ref, () => ({
     spin: (spinDuration: number) => startSpin(spinDuration),
     showItem,
+    stopImmediate,
   }));
-
-  const overlapHeadScrollPosition = scrollPosition - OVERLAP_COUNT * IMAGE_SIZE;
-  const overlapTailScrollPosition = scrollPosition + imageCount * IMAGE_SIZE;
 
   return (
     <div
-      className={STYLES.ImageScroller}
-      // Remove onClick handler for external control
+      className={classnames(STYLES.ImageScroller, isWeapon && STYLES.weapon)}
       style={{ cursor: isSpinning ? "not-allowed" : "pointer" }}
     >
-      <div
-        className={classnames(STYLES.scrollArea, STYLES.scrollOverlapHead)}
-        style={{ transform: `translateY(${overlapHeadScrollPosition}px)` }}
-      >
-        {scrollOverlapHead}
+      <div className={STYLES.scrollerWindow}>
+        <div className={STYLES.itemsLayer}>
+          {items.map((item, idx) => {
+            const offset = (idx - index + imageCount) % imageCount;
+            const normalizedOffset =
+              offset > imageCount / 2 ? offset - imageCount : offset;
+            const transform = itemTransform(idx);
+            const isCenter = idx === index;
+            return (
+              <div
+                key={item.name}
+                className={classnames(
+                  STYLES.image,
+                  isWeapon && STYLES.weapon,
+                  isCenter && STYLES.highlight,
+                  isTransitioning && STYLES.transition
+                )}
+                style={{ transform, zIndex: 1000 - Math.abs(normalizedOffset) }}
+                data-idx={idx}
+              >
+                <img src={item.image} />
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div
-        className={classnames(
-          STYLES.scrollArea,
-          isTransitioning && STYLES.transition
-        )}
-        style={{
-          transform: `translateY(${scrollPosition}px)`,
-          transition: isTransitioning
-            ? `transform ${transitionDuration}s cubic-bezier(0, 1.4, 1, 1)`
-            : "none",
-        }}
+        className={classnames(STYLES.resultOverlay, showResult && STYLES.show)}
       >
-        {imageArray}
-      </div>
-      <div
-        className={classnames(STYLES.scrollArea, STYLES.scrollOverlapTail)}
-        style={{ transform: `translateY(${overlapTailScrollPosition}px)` }}
-      >
-        {scrollOverlapTail}
+        <div className={STYLES.resultTier}>
+          <TierIcon tier={toTierUnion(items[index]?.tier)} />
+        </div>
+        <div className={STYLES.resultName}>{items[index]?.name}</div>
       </div>
     </div>
   );
-});
+};
+
+const ImageScroller = forwardRef<ImageScrollerHandle, ImageScrollerProps>(
+  ImageScrollerImpl
+);
+
+export { ImageScroller };

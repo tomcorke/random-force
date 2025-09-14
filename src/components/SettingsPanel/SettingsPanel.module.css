@@ -1,0 +1,29 @@
+.SettingsPanel {
+  padding: 12px;
+  background: linear-gradient(180deg, #111, #0f0f0f);
+  border: 6px groove #666;
+  border-radius: 8px;
+  color: #ddd;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.SettingsPanel h3 {
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.row {
+  margin: 8px 0;
+}
+
+.switchLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.switchLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}

@@ -1,0 +1,64 @@
+.Slider {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #ddd;
+}
+
+.track {
+  position: relative;
+  height: 12px;
+  background: linear-gradient(90deg, #222, #111);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.04);
+}
+
+.steps {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  pointer-events: none;
+}
+
+.stepDot {
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 220px;
+}
+
+.btn {
+  background: linear-gradient(180deg, #333, #111);
+  color: #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 6px groove rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
