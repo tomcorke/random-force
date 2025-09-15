@@ -138,10 +138,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       // background
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, size, size);
-      // border
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 12;
-      ctx.strokeRect(6, 6, size - 12, size - 12);
 
       // pip drawing helper
       const pip = (x: number, y: number) => {
@@ -213,10 +209,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         typeof spec === "object" && spec.colour ? spec.colour : "#10f898";
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, size, size);
-      // border
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = Math.max(6, Math.floor(size * 0.02));
-      ctx.strokeRect(12, 12, size - 24, size - 24);
 
       // text to display
       const text =
@@ -291,7 +283,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     ];
 
     // Use MeshStandardMaterial so lighting affects the faces; tint with base color #10f898
-    const baseColor = new THREE.Color("#10f898");
+    const baseColor = new THREE.Color("#ffffff");
     const stdMaterials = materials.map((m) => {
       const map = (m as THREE.MeshBasicMaterial).map ?? null;
       return new THREE.MeshStandardMaterial({
