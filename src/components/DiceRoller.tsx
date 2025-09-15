@@ -1,6 +1,7 @@
 import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import * as THREE from "three";
 import { World, Body, Box, Vec3, Quaternion } from "cannon-es";
+import useAudio from "../contexts/useAudio";
 
 export type FaceSpec =
   | string
@@ -28,6 +29,8 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   const startRollRef = useRef<() => void>(() => {});
   const mountedRef = useRef(false);
   const queuedStartCallsRef = useRef<Array<() => void>>([]);
+
+  const { playDing, playTick } = useAudio();
 
   useImperativeHandle(ref, () => ({
     roll: (faces?: FaceSpec[] | null) => {
@@ -117,7 +120,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
     // Dice body (double the previous visual size)
     const diceBody = new Body({
-      mass: 6,
+      mass: 50,
       shape: new Box(new Vec3(12, 12, 12)),
       position: new Vec3(0, 36, 0),
       angularDamping: 0.12,
@@ -217,35 +220,24 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
           ? String(spec.label ?? spec.value)
           : String(spec);
       // draw centered
-      const fontSize = Math.floor(size * 0.28);
+      let fontSize = Math.floor(size * 0.28);
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = `${fontSize}px sans-serif`;
       // break long text if necessary
       const maxWidth = size * 0.8;
-      if (ctx.measureText(text).width <= maxWidth) {
-        ctx.fillText(text, size / 2, size / 2);
-      } else {
-        // naive wrap: split by space
-        const parts = String(text).split(/\s+/);
-        const lines: string[] = [];
-        let current = "";
-        for (const part of parts) {
-          const cand = current ? `${current} ${part}` : part;
-          if (ctx.measureText(cand).width <= maxWidth) current = cand;
-          else {
-            if (current) lines.push(current);
-            current = part;
-          }
-        }
-        if (current) lines.push(current);
-        const lineHeight = fontSize * 0.9;
-        const startY = size / 2 - (lines.length - 1) * (lineHeight / 2);
-        for (let i = 0; i < lines.length; i++) {
-          ctx.fillText(lines[i], size / 2, startY + i * lineHeight);
-        }
+
+      const maxTries = 5;
+      let tries = 0;
+      while (ctx.measureText(text).width > maxWidth) {
+        tries++;
+        if (tries >= maxTries) break;
+        fontSize = fontSize * 0.9;
+        ctx.font = `${fontSize}px sans-serif`;
       }
+
+      ctx.fillText(text, size / 2, size / 2);
 
       const tex = new THREE.CanvasTexture(canvas);
       tex.needsUpdate = true;
@@ -335,7 +327,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       clearBoundaryWalls();
       if (!sides || sides.length === 0) return;
       const t = 1; // wall thickness (half-extent on thin axis)
-      const h = 20; // wall height half-extent
+      const h = 100; // wall height half-extent
       // left wall at x = -limit - t
       if (sides.includes("left")) {
         const left = new Body({
@@ -378,11 +370,20 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       // no debug visuals
     }
 
+    diceBody.addEventListener("collide", () => {
+      playTick();
+    });
+
     // no visual debug wall helpers
 
-    function animate() {
+    let lastFrameTime = 0;
+    const animate: FrameRequestCallback = (time) => {
+      const delta = Math.min(1 / 20, (time - lastFrameTime) / 400);
+      lastFrameTime = time;
+
+      world.step(delta);
+
       let isSettled = false;
-      world.step(1 / 60);
       if (diceMesh && diceBody) {
         // sync positions between Cannon and Three
         diceMesh.position.copy(diceBody.position as unknown as THREE.Vector3);
@@ -399,12 +400,13 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         diceBody.position.y < 18
       ) {
         isSettled = true;
+        playDing();
+
         if (resolveRef.current) {
           const result = getDiceResult(
             diceBody.quaternion,
             faceSpecsRef.current
           );
-          console.log("settled", result);
           resolveRef.current(result);
           resolveRef.current = null;
           // clear temporary boundary walls once the die has settled
@@ -441,7 +443,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       } else {
         frameIdRef.current = null;
       }
-    }
+    };
 
     function startRoll() {
       if (!diceBody) return;

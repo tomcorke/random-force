@@ -54,12 +54,21 @@
     gap: 1em;
   }
 
-  .row {
+  .row,
+  .rowWide {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1em;
     margin-bottom: 2em;
+
+    &.nomargin {
+      margin-bottom: 0;
+    }
+  }
+
+  .rowWide {
+    gap: 4em;
   }
 
   .slotRow {
@@ -90,6 +99,28 @@
   .mobileOnly {
     @media (min-width: 800px) {
       display: none;
+    }
+  }
+
+  .diceSection {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: -8px;
+
+    h2 {
+    }
+
+    .result {
+      font-size: 36px;
+      margin: 8px 0 20px;
+      color: var(--df-green);
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .button {
     }
   }
 }

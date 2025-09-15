@@ -24,6 +24,8 @@ import {
   weapons,
 } from "./data/generated";
 import classnames from "classnames";
+import { useStoredState } from "./hooks/useStoredState";
+import z from "zod";
 
 const itemArrayFromData = (
   data: Record<
@@ -86,7 +88,6 @@ function App() {
     useSettings();
   // dice roller
   const { rollDice, DiceRollerComponent } = useDiceRoller();
-  const [diceResult, setDiceResult] = useState<number | string | null>(null);
 
   const categories: Category[] = [
     {
@@ -156,6 +157,13 @@ function App() {
   const [locked, setLocked] = useState<boolean[]>(
     Array(categories.length).fill(false)
   );
+
+  const [difficulty, setDifficulty] = useStoredState(
+    "difficulty",
+    "easy",
+    z.string()
+  );
+  const [budget, setBudget] = useStoredState("budget", "200k", z.string());
 
   const neutral = "#888888";
   const [slotColors, setSlotColors] = useState<string[]>(
@@ -344,44 +352,66 @@ function App() {
             <Button onClick={spinAll}>Spin all!</Button>
           )}
         </div>
-        <div>
-          {/* Dice UI: render full-viewport canvas and roll button above settings */}
-          <div>{DiceRollerComponent()}</div>
-          <div>
-            <Button
-              onClick={async () => {
-                try {
-                  // const res = await rollDice([
-                  //   { value: "easy" },
-                  //   { value: "normal" },
-                  //   { value: "easy" },
-                  //   { value: "normal" },
-                  //   { value: "easy" },
-                  //   { value: "normal" },
-                  // ]);
-                  const res = await rollDice([
-                    { value: 100, label: "100k" },
-                    { value: 200, label: "200k" },
-                    { value: 300, label: "300k" },
-                    { value: 400, label: "400k" },
-                    { value: 500, label: "500k" },
-                    { value: 600, label: "600k" },
-                  ]);
-                  setDiceResult(res);
-                } catch {
-                  // ignore if not mounted
-                }
-              }}
-            >
-              Roll Dice
-            </Button>
-            {diceResult != null && <div>Result: {diceResult}</div>}
+
+        <div className={STYLES.rowWide}>
+          <div className={STYLES.diceSection}>
+            <h2>Difficulty</h2>
+            <div className={STYLES.result}>{difficulty}</div>
+            <div className={STYLES.button}>
+              <Button
+                onClick={async () => {
+                  try {
+                    const res = await rollDice([
+                      "easy",
+                      "easy",
+                      "easy",
+                      "normal",
+                      "normal",
+                      "normal",
+                    ]);
+                    setDifficulty(res.toString());
+                  } catch {
+                    // ignore if not mounted
+                  }
+                }}
+              >
+                Roll for difficulty
+              </Button>
+            </div>
+          </div>
+          <div className={STYLES.diceSection}>
+            <h2>Budget</h2>
+            <div className={STYLES.result}>{budget}</div>
+            <div className={STYLES.button}>
+              <Button
+                onClick={async () => {
+                  try {
+                    const res = await rollDice([
+                      "0",
+                      "100k",
+                      "200k",
+                      "300k",
+                      "500k",
+                      "Unlimited",
+                    ]);
+                    setBudget(res.toString());
+                  } catch {
+                    // ignore if not mounted
+                  }
+                }}
+              >
+                Roll for budget
+              </Button>
+            </div>
           </div>
         </div>
         <SettingsPanel />
       </div>
       <Metadata />
       <KoFi />
+
+      {/* Dice UI: render full-viewport canvas and roll button above settings */}
+      <div>{DiceRollerComponent()}</div>
     </>
   );
 }
