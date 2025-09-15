@@ -378,10 +378,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
     let lastFrameTime = 0;
     const animate: FrameRequestCallback = (time) => {
-      const delta = Math.min(1 / 20, (time - lastFrameTime) / 400);
+      const delta = Math.min(1 / 20, (time - lastFrameTime) / 1000);
       lastFrameTime = time;
 
-      world.step(delta);
+      world.step(delta * 2.5);
 
       let isSettled = false;
       if (diceMesh && diceBody) {
