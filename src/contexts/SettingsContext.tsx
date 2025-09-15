@@ -32,6 +32,8 @@ type Settings = {
   setSoundEnabled: (v: boolean) => void;
   instantSpin: boolean;
   setInstantSpin: (v: boolean) => void;
+  showNudgers: boolean;
+  setShowNudgers: (v: boolean) => void;
   tierBounds: Record<string, { min: number; max: number }>;
   setTierBounds: (key: string, bounds: { min: number; max: number }) => void;
   weaponTypeEnabled: Record<string, boolean>;
@@ -52,6 +54,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [instantSpin, setInstantSpin] = useStoredState(
     "settings.instantSpin",
+    false,
+    z.boolean()
+  );
+  const [showNudgers, setShowNudgers] = useStoredState(
+    "settings.showNudgers",
     false,
     z.boolean()
   );
@@ -108,6 +115,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         setSoundEnabled,
         instantSpin,
         setInstantSpin,
+        showNudgers,
+        setShowNudgers,
         tierBounds,
         setTierBounds,
         weaponTypeEnabled,

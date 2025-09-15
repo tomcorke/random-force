@@ -28,10 +28,11 @@ type ImageScrollerProps = {
   selectionFilter?: (item: ScrollerItem) => boolean;
 };
 
-type ImageScrollerHandle = {
+export type ImageScrollerHandle = {
   spin: (time: number) => void;
   showItem: (idx: number) => void;
   stopImmediate: () => void;
+  nudge: (delta: number) => void;
 };
 
 const ImageScrollerImpl = (
@@ -239,10 +240,23 @@ const ImageScrollerImpl = (
     setShowResult(true);
   };
 
+  const nudge = (delta: number) => {
+    if (isSpinning) return;
+    const newIndex = (index + delta + imageCount) % imageCount;
+    setIndex(newIndex);
+    // notify parent of index change
+    if (typeof onIndexChange === "function")
+      onIndexChange(newIndex, items[newIndex]);
+    // play small tick sound
+    playTick();
+    setShowResult(true);
+  };
+
   useImperativeHandle(ref, () => ({
     spin: (spinDuration: number) => startSpin(spinDuration),
     showItem,
     stopImmediate,
+    nudge,
   }));
 
   let overlayIcon: JSX.Element | null = null;

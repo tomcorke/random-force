@@ -12,8 +12,14 @@ const WEAPON_TYPE_LABELS: Record<string, string> = {
 };
 
 export const SettingsPanel = () => {
-  const { soundEnabled, setSoundEnabled, instantSpin, setInstantSpin } =
-    useSettings();
+  const {
+    soundEnabled,
+    setSoundEnabled,
+    instantSpin,
+    setInstantSpin,
+    showNudgers,
+    setShowNudgers,
+  } = useSettings();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -151,17 +157,15 @@ export const SettingsPanel = () => {
         </div>
       </div>
       <div className={STYLES.body}>
-        <div className={STYLES.row}>
+        <div className={STYLES.rowWide}>
           <label className={STYLES.switchLabel}>
             <input
               type="checkbox"
               checked={soundEnabled}
               onChange={(e) => setSoundEnabled(e.target.checked)}
             />
-            <span>Sound</span>
+            <span>Enable sounds</span>
           </label>
-        </div>
-        <div className={STYLES.row}>
           <label className={STYLES.switchLabel}>
             <input
               type="checkbox"
@@ -169,6 +173,14 @@ export const SettingsPanel = () => {
               onChange={(e) => setInstantSpin(e.target.checked)}
             />
             <span>Instant spin</span>
+          </label>
+          <label className={STYLES.switchLabel}>
+            <input
+              type="checkbox"
+              checked={showNudgers}
+              onChange={(e) => setShowNudgers(e.target.checked)}
+            />
+            <span>Show nudgers</span>
           </label>
         </div>
 

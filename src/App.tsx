@@ -8,7 +8,10 @@ import { Slot } from "./components/Slot";
 import { COLORS } from "./constants";
 import { SettingsPanel } from "./components/SettingsPanel/SettingsPanel";
 
-import type { ScrollerItem } from "./components/ImageScroller/ImageScroller";
+import type {
+  ImageScrollerHandle,
+  ScrollerItem,
+} from "./components/ImageScroller/ImageScroller";
 import useSettings from "./contexts/useSettings";
 import {
   maps,
@@ -54,13 +57,7 @@ const rigsArray = itemArrayFromData(rigs);
 const weaponsArray = itemArrayFromData(weapons);
 
 function App() {
-  // generic scroller refs (indexed by category)
-  type ScrollerHandle = {
-    spin: (time: number) => void;
-    showItem: (idx: number) => void;
-    stopImmediate: () => void;
-  };
-  const scrollerRefs = useRef<(ScrollerHandle | null)[]>([]);
+  const scrollerRefs = useRef<(ImageScrollerHandle | null)[]>([]);
 
   type Category = {
     key: string;
@@ -70,7 +67,8 @@ function App() {
     selectionFilter?: (item: ScrollerItem) => boolean;
   };
 
-  const { tierBounds, weaponTypeEnabled, mapEnabled } = useSettings();
+  const { tierBounds, weaponTypeEnabled, mapEnabled, showNudgers } =
+    useSettings();
 
   const categories: Category[] = [
     {
@@ -245,6 +243,19 @@ function App() {
                   selectionFilter={cat.selectionFilter}
                 />
               </Slot>
+              <div className={STYLES.slotButtonsTop}>
+                {showNudgers && (
+                  <Button
+                    disabled={locked[idx] || spinning[idx]}
+                    buttonStyle="small"
+                    onClick={() => {
+                      scrollerRefs.current[idx]?.nudge(-1);
+                    }}
+                  >
+                    ▲
+                  </Button>
+                )}
+              </div>
               <div className={STYLES.slotButtons}>
                 <Button
                   disabled={locked[idx]}
@@ -264,6 +275,17 @@ function App() {
                 >
                   {spinning[idx] ? "stop" : "spin"}
                 </Button>
+                {showNudgers && (
+                  <Button
+                    disabled={locked[idx] || spinning[idx]}
+                    buttonStyle="small"
+                    onClick={() => {
+                      scrollerRefs.current[idx]?.nudge(1);
+                    }}
+                  >
+                    ▼
+                  </Button>
+                )}
                 <Button
                   buttonStyle="small"
                   active={locked[idx]}

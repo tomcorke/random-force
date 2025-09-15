@@ -56,6 +56,14 @@
   .slotContainer {
     position: relative;
 
+    .slotButtonsTop {
+      position: absolute;
+      top: 18px;
+      display: flex;
+      flex-flow: row nowrap;
+      gap: 12px;
+    }
+
     .slotButtons {
       position: absolute;
       bottom: -18px;
