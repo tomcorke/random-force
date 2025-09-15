@@ -7,6 +7,7 @@ import { Metadata } from "./components/Metadata";
 import { Slot } from "./components/Slot";
 import { COLORS } from "./constants";
 import { SettingsPanel } from "./components/SettingsPanel/SettingsPanel";
+import { useDiceRoller } from "./hooks/useDiceRoller";
 
 import type {
   ImageScrollerHandle,
@@ -83,6 +84,9 @@ function App() {
 
   const { tierBounds, weaponTypeEnabled, mapEnabled, showNudgers } =
     useSettings();
+  // dice roller
+  const { rollDice, DiceRollerComponent } = useDiceRoller();
+  const [diceResult, setDiceResult] = useState<number | null>(null);
 
   const categories: Category[] = [
     {
@@ -339,6 +343,25 @@ function App() {
           ) : (
             <Button onClick={spinAll}>Spin all!</Button>
           )}
+        </div>
+        <div>
+          {/* Dice UI: render full-viewport canvas and roll button above settings */}
+          <div>{DiceRollerComponent()}</div>
+          <div>
+            <Button
+              onClick={async () => {
+                try {
+                  const res = await rollDice();
+                  setDiceResult(res);
+                } catch {
+                  // ignore if not mounted
+                }
+              }}
+            >
+              Roll Dice
+            </Button>
+            {diceResult != null && <div>Result: {diceResult}</div>}
+          </div>
         </div>
         <SettingsPanel />
       </div>

@@ -1,0 +1,583 @@
+import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
+import * as THREE from "three";
+import { World, Body, Box, Vec3, Quaternion } from "cannon-es";
+
+export type DiceRollerHandle = {
+  roll: () => Promise<number>;
+};
+
+const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const resolveRef = useRef<((result: number) => void) | null>(null);
+  const worldRef = useRef<World | null>(null);
+  const diceBodyRef = useRef<Body | null>(null);
+  const diceMeshRef = useRef<THREE.Mesh | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const frameIdRef = useRef<number | null>(null);
+  const startRollRef = useRef<() => void>(() => {});
+  const mountedRef = useRef(false);
+  const queuedStartCallsRef = useRef<Array<() => void>>([]);
+
+  useImperativeHandle(ref, () => ({
+    roll: () => {
+      console.debug("DiceRoller: roll() called via imperative handle");
+      return new Promise<number>((resolve) => {
+        resolveRef.current = resolve;
+        // if effect hasn't finished mounting, queue the call
+        if (!mountedRef.current) {
+          console.debug("DiceRoller: roll queued until mount");
+          queuedStartCallsRef.current.push(() => startRollRef.current());
+        } else {
+          startRollRef.current();
+        }
+      });
+    },
+    // also expose a startRoll for callers that want to trigger without promise
+    startRoll: () => {
+      console.debug("DiceRoller: startRoll() called via imperative handle");
+      startRollRef.current();
+    },
+  }));
+
+  useEffect(() => {
+    if (!mountRef.current) return;
+    const mount = mountRef.current;
+    // Three.js setup
+    const scene = new THREE.Scene();
+    // debug visuals
+    const DEBUG = true;
+    const wallMeshes: THREE.Mesh[] = [];
+    let spawnMarker: THREE.Mesh | null = null;
+    if (DEBUG) {
+      const axes = new THREE.AxesHelper(80);
+      scene.add(axes);
+      const grid = new THREE.GridHelper(1200, 24, 0x444444, 0x222222);
+      scene.add(grid);
+      spawnMarker = new THREE.Mesh(
+        new THREE.SphereGeometry(6, 12, 8),
+        new THREE.MeshBasicMaterial({ color: 0xff0000 })
+      );
+      spawnMarker.visible = false;
+      scene.add(spawnMarker);
+    }
+    const camera = new THREE.PerspectiveCamera(5, 1, 0.1, 2500);
+    // Top-down view: position high on Y and look at the plane so the top face points toward the viewer
+    // position camera so the full play area (walls) is visible; base on viewport
+    const viewportSpan = Math.max(window.innerWidth, window.innerHeight);
+    const cameraY = Math.max(240, viewportSpan * 0.9);
+    camera.position.set(0, cameraY, 0);
+    camera.lookAt(0, 0, 0);
+    // debug camera
+    console.debug("DiceRoller: camera positioned", {
+      y: camera.position.y,
+      viewportSpan,
+    });
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    // give the canvas a faint background so it's easy to spot during debugging
+    renderer.setClearColor(new THREE.Color(0x000000), 0.06);
+
+    function setRendererSize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    // make canvas cover viewport and not block UI interactions
+    setRendererSize();
+    // enable shadows
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.domElement.style.position = "fixed";
+    renderer.domElement.style.left = "0";
+    renderer.domElement.style.top = "0";
+    renderer.domElement.style.width = "100vw";
+    renderer.domElement.style.height = "100vh";
+    renderer.domElement.style.pointerEvents = "none";
+    // put the canvas above the UI so it's visible
+    renderer.domElement.style.zIndex = "9999";
+    // add a subtle border so the canvas is easy to spot during debugging
+    renderer.domElement.style.border = "2px solid rgba(255,0,0,0.12)";
+    // append to document.body so it covers the full viewport reliably
+    document.body.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+    // debug mount
+    console.debug("DiceRoller: renderer appended to document.body");
+
+    // Lighting: ambient + directional so the dice has depth; directional casts shadows
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambient);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir.position.set(50, 100, 50);
+    dir.castShadow = true;
+    dir.shadow.mapSize.width = 2048;
+    dir.shadow.mapSize.height = 2048;
+    const d = 100;
+    // configure shadow camera frustum for large scene (OrthographicCamera)
+    const shadowCam = dir.shadow.camera as THREE.OrthographicCamera;
+    shadowCam.left = -d;
+    shadowCam.right = d;
+    shadowCam.top = d;
+    shadowCam.bottom = -d;
+    shadowCam.near = 0.5;
+    shadowCam.far = 500;
+    scene.add(dir);
+
+    // Cannon-es setup
+    const world = new World({ gravity: new Vec3(0, -20, 0) });
+    worldRef.current = world;
+
+    // Dice body (tripled size)
+    const diceBody = new Body({
+      mass: 6,
+      shape: new Box(new Vec3(9, 9, 9)),
+      position: new Vec3(0, 36, 0),
+      angularDamping: 0.12,
+      linearDamping: 0.08,
+    });
+    world.addBody(diceBody);
+    diceBodyRef.current = diceBody;
+
+    // Dice mesh with numbered face textures generated via canvas
+    // match the visual size to the physics body (tripled)
+    const diceGeometry = new THREE.BoxGeometry(18, 18, 18);
+
+    function createPipTexture(n: number) {
+      const size = 512;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d")!;
+      // background
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, size, size);
+      // border
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 12;
+      ctx.strokeRect(6, 6, size - 12, size - 12);
+
+      // pip drawing helper
+      const pip = (x: number, y: number) => {
+        const r = size * 0.06;
+        ctx.beginPath();
+        ctx.fillStyle = "#000000";
+        ctx.arc(x * size, y * size, r, 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      // positions (normalized 0..1)
+      const C = 0.5;
+      const L = 0.25;
+      const R = 0.75;
+      const T = 0.25;
+      const B = 0.75;
+
+      // draw pips for each face
+      switch (n) {
+        case 1:
+          pip(C, C);
+          break;
+        case 2:
+          pip(L, T);
+          pip(R, B);
+          break;
+        case 3:
+          pip(L, T);
+          pip(C, C);
+          pip(R, B);
+          break;
+        case 4:
+          pip(L, T);
+          pip(R, T);
+          pip(L, B);
+          pip(R, B);
+          break;
+        case 5:
+          pip(L, T);
+          pip(R, T);
+          pip(C, C);
+          pip(L, B);
+          pip(R, B);
+          break;
+        case 6:
+          pip(L, T);
+          pip(R, T);
+          pip(L, C);
+          pip(R, C);
+          pip(L, B);
+          pip(R, B);
+          break;
+        default:
+          pip(C, C);
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
+      return tex;
+    }
+
+    // BoxGeometry material order: +X, -X, +Y, -Y, +Z, -Z
+    // Our getDiceResult maps: +Y -> 1, -Y -> 6, +X -> 3, -X -> 4, +Z -> 2, -Z -> 5
+    const materials = [
+      new THREE.MeshBasicMaterial({ map: createPipTexture(3) }), // +X
+      new THREE.MeshBasicMaterial({ map: createPipTexture(4) }), // -X
+      new THREE.MeshBasicMaterial({ map: createPipTexture(1) }), // +Y (top)
+      new THREE.MeshBasicMaterial({ map: createPipTexture(6) }), // -Y (bottom)
+      new THREE.MeshBasicMaterial({ map: createPipTexture(2) }), // +Z (front)
+      new THREE.MeshBasicMaterial({ map: createPipTexture(5) }), // -Z (back)
+    ];
+
+    // Use MeshStandardMaterial so lighting affects the faces; tint with base color #10f898
+    const baseColor = new THREE.Color("#10f898");
+    const stdMaterials = materials.map((m) => {
+      const map = (m as THREE.MeshBasicMaterial).map ?? null;
+      return new THREE.MeshStandardMaterial({
+        map,
+        color: baseColor,
+        roughness: 0.6,
+        metalness: 0.05,
+      });
+    });
+    const diceMesh = new THREE.Mesh(diceGeometry, stdMaterials);
+    scene.add(diceMesh);
+    diceMeshRef.current = diceMesh;
+    diceMesh.castShadow = true;
+    diceMesh.receiveShadow = false;
+    // ensure visual matches physics start position
+    diceMesh.position.copy(diceBody.position as unknown as THREE.Vector3);
+    console.debug("DiceRoller: dice mesh created at", diceMesh.position);
+
+    // Add an invisible floor that only receives shadows so it doesn't obscure the page
+    const floorGeo = new THREE.PlaneGeometry(2000, 2000);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.6 });
+    const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.position.y = -1;
+    // receiveShadow must be true so shadows are drawn on the shadow material
+    floorMesh.receiveShadow = true;
+    // make sure the plane itself doesn't render color (ShadowMaterial handles this)
+    scene.add(floorMesh);
+
+    // Floor (much larger so big die can roll across viewport)
+    const floorBody = new Body({
+      mass: 0,
+      shape: new Box(new Vec3(1000, 1, 1000)),
+      position: new Vec3(0, -1, 0),
+    });
+    world.addBody(floorBody);
+
+    // physics boundary walls (can be created/cleared dynamically)
+    const boundaryWalls: Body[] = [];
+
+    function clearBoundaryWalls() {
+      boundaryWalls.forEach((b) => world.removeBody(b));
+      boundaryWalls.length = 0;
+      // also clear debug wall visuals
+      try {
+        updateDebugWalls();
+      } catch {
+        // ignore
+      }
+    }
+
+    function createBoundaryWallsForSides(
+      sides: Array<"left" | "right" | "top" | "bottom">,
+      limit = 100
+    ) {
+      // remove any previous
+      clearBoundaryWalls();
+      if (!sides || sides.length === 0) return;
+      const t = 1; // wall thickness (half-extent on thin axis)
+      const h = 20; // wall height half-extent
+      // left wall at x = -limit - t
+      if (sides.includes("left")) {
+        const left = new Body({
+          mass: 0,
+          shape: new Box(new Vec3(t, h, limit)),
+          position: new Vec3(-limit - t, h - 1, 0),
+        });
+        world.addBody(left);
+        boundaryWalls.push(left);
+      }
+      if (sides.includes("right")) {
+        const right = new Body({
+          mass: 0,
+          shape: new Box(new Vec3(t, h, limit)),
+          position: new Vec3(limit + t, h - 1, 0),
+        });
+        world.addBody(right);
+        boundaryWalls.push(right);
+      }
+      if (sides.includes("top")) {
+        // top means negative Z
+        const top = new Body({
+          mass: 0,
+          shape: new Box(new Vec3(limit, h, t)),
+          position: new Vec3(0, h - 1, -(limit / 2) - t),
+        });
+        world.addBody(top);
+        boundaryWalls.push(top);
+      }
+      if (sides.includes("bottom")) {
+        // bottom means positive Z
+        const bottom = new Body({
+          mass: 0,
+          shape: new Box(new Vec3(limit, h, t)),
+          position: new Vec3(0, h - 1, limit / 2 + t),
+        });
+        world.addBody(bottom);
+        boundaryWalls.push(bottom);
+      }
+      // update debug visuals to show the limit as span
+      try {
+        updateDebugWalls(limit);
+      } catch {
+        // ignore
+      }
+    }
+
+    // debug: draw wall bounds as wireframe boxes so we can visualise spawn/limits
+    function updateDebugWalls(
+      span = Math.max(window.innerWidth, window.innerHeight) / 4
+    ) {
+      if (!DEBUG) return;
+      // remove existing
+      wallMeshes.forEach((m) => {
+        if (m.parent) m.parent.remove(m);
+      });
+      wallMeshes.length = 0;
+      const wallThicknessVis = 1;
+      const wallHeightVis = 20;
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.6,
+      });
+      const make = (
+        sx: number,
+        sy: number,
+        sz: number,
+        px: number,
+        py: number,
+        pz: number
+      ) => {
+        const geo = new THREE.BoxGeometry(sx * 2, sy * 2, sz * 2);
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(px, py, pz);
+        scene.add(mesh);
+        wallMeshes.push(mesh);
+      };
+      // left
+      make(
+        wallThicknessVis,
+        wallHeightVis,
+        span,
+        -span - wallThicknessVis,
+        wallHeightVis / 2 - 1,
+        0
+      );
+      // right
+      make(
+        wallThicknessVis,
+        wallHeightVis,
+        span,
+        span + wallThicknessVis,
+        wallHeightVis / 2 - 1,
+        0
+      );
+      // front
+      make(
+        span,
+        wallHeightVis,
+        wallThicknessVis,
+        0,
+        wallHeightVis / 2 - 1,
+        -span - wallThicknessVis
+      );
+      // back
+      make(
+        span,
+        wallHeightVis,
+        wallThicknessVis,
+        0,
+        wallHeightVis / 2 - 1,
+        span + wallThicknessVis
+      );
+    }
+    updateDebugWalls();
+
+    function animate() {
+      world.step(1 / 60);
+      if (diceMesh && diceBody) {
+        // sync positions between Cannon and Three
+        diceMesh.position.copy(diceBody.position as unknown as THREE.Vector3);
+        diceMesh.quaternion.copy(
+          diceBody.quaternion as unknown as THREE.Quaternion
+        );
+      }
+      renderer.render(scene, camera);
+
+      // Check if dice has settled and resolve promise if present
+      if (
+        diceBody.velocity.length() < 0.1 &&
+        diceBody.angularVelocity.length() < 0.1 &&
+        diceBody.position.y < 2.5
+      ) {
+        if (resolveRef.current) {
+          const result = getDiceResult(diceBody.quaternion);
+          resolveRef.current(result);
+          resolveRef.current = null;
+          // clear temporary boundary walls once the die has settled
+          try {
+            clearBoundaryWalls();
+          } catch {
+            // ignore
+          }
+        }
+      }
+
+      frameIdRef.current = requestAnimationFrame(animate);
+    }
+
+    function startRoll() {
+      if (!diceBody) return;
+      // larger span so the die is thrown farther across the viewport
+      const spanLarge = 300;
+      // compute spawn margin so die starts outside the walls considering die half-size
+      const dieHalf = 9; // physics half-extent used when creating the die
+      const spawnMargin = Math.max(40, dieHalf + 12);
+      // pick a random side (0=left,1=right)
+      const side = Math.floor(Math.random() * 2);
+      let px = 0,
+        pz = 0,
+        vx = 0,
+        vz = 0;
+      const baseSpeed = (Math.random() * 6 + 14) * 6; // boosted speed for longer throws
+      switch (side) {
+        case 0: // left
+          px = -spanLarge - spawnMargin;
+          pz = 0;
+          vx = baseSpeed + Math.random() * 12;
+          vz = (Math.random() - 0.5) * 12;
+          // create walls on top/right/bottom to limit roll to 100 from center
+          createBoundaryWallsForSides(["top", "right", "bottom"], 100);
+          break;
+        case 1: // right
+          px = spanLarge + spawnMargin;
+          pz = 0;
+          vx = -baseSpeed - Math.random() * 12;
+          vz = (Math.random() - 0.5) * 12;
+          // create walls on left/top/bottom
+          createBoundaryWallsForSides(["left", "top", "bottom"], 100);
+          break;
+      }
+
+      // put dice well above ground to allow tumble
+      diceBody.position.set(px, 36 + Math.random() * 18, pz);
+      console.debug("DiceRoller: dice positioned", { px, pz });
+      // show spawn marker briefly
+      if (spawnMarker) {
+        spawnMarker.visible = true;
+        spawnMarker.position.set(px, 8, pz);
+        setTimeout(() => {
+          if (spawnMarker) spawnMarker.visible = false;
+        }, 2000);
+      }
+      diceBody.velocity.set(vx, 8 + Math.random() * 8, vz);
+      diceBody.angularVelocity.set(
+        Math.random() * 10,
+        Math.random() * 10,
+        Math.random() * 10
+      );
+      diceBody.quaternion.setFromEuler(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+
+      // kick off animation loop if not running
+      if (frameIdRef.current == null)
+        frameIdRef.current = requestAnimationFrame(animate);
+      console.debug("DiceRoller: throw velocities", { vx, vz });
+    }
+
+    // expose startRoll via ref so the imperative handle can call it
+    startRollRef.current = startRoll;
+    // mark mounted and flush any queued start calls requested before mount
+    mountedRef.current = true;
+    if (queuedStartCallsRef.current.length) {
+      queuedStartCallsRef.current.forEach((fn) => fn());
+      queuedStartCallsRef.current.length = 0;
+    }
+
+    // handle resize
+    function handleResize() {
+      setRendererSize();
+      // update debug visuals for new viewport
+      try {
+        updateDebugWalls();
+      } catch {
+        // ignore
+      }
+    }
+    window.addEventListener("resize", handleResize);
+
+    // cleanup
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current);
+      // dispose three renderer and remove DOM element
+      try {
+        renderer.dispose();
+      } catch {
+        // ignore
+      }
+      if (mount && renderer.domElement.parentElement === mount) {
+        mount.removeChild(renderer.domElement);
+      } else if (renderer.domElement.parentElement) {
+        renderer.domElement.parentElement.removeChild(renderer.domElement);
+      }
+      // clear world
+      world.bodies.forEach((b) => world.removeBody(b));
+      // cleanup debug meshes
+      wallMeshes.forEach((m) => {
+        if (m.parent) m.parent.remove(m);
+      });
+      if (spawnMarker && spawnMarker.parent)
+        spawnMarker.parent.remove(spawnMarker);
+    };
+  }, []);
+
+  function getDiceResult(q: Quaternion): number {
+    // Map quaternion to up face (cube)
+    const up = new Vec3(0, 1, 0);
+    const faces = [
+      new Vec3(0, 1, 0), // 1
+      new Vec3(0, -1, 0), // 6
+      new Vec3(1, 0, 0), // 3
+      new Vec3(-1, 0, 0), // 4
+      new Vec3(0, 0, 1), // 2
+      new Vec3(0, 0, -1), // 5
+    ];
+    let maxDot = -Infinity;
+    let result = 1;
+    for (let i = 0; i < faces.length; i++) {
+      const worldFace = faces[i].clone();
+      q.vmult(worldFace, worldFace);
+      const dot = worldFace.dot(up);
+      if (dot > maxDot) {
+        maxDot = dot;
+        result = i + 1;
+      }
+    }
+    return result;
+  }
+
+  // startRoll is provided via startRollRef
+
+  return <div ref={mountRef} />;
+});
+
+export default DiceRoller;
