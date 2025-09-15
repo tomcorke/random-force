@@ -56,7 +56,21 @@ const backpacksArray = itemArrayFromData(backpacks);
 const rigsArray = itemArrayFromData(rigs);
 const weaponsArray = itemArrayFromData(weapons);
 
+const taglines = [
+  "Shoot, loot, and scoot!",
+  "It's for the boys (and the gals)",
+  "Lock and load",
+  "For when you can't decide",
+  "Pew pew pew",
+  "Risk it for the biscuit",
+  "take the W",
+];
+
 function App() {
+  const [tagLine] = useState(
+    taglines[Math.floor(Math.random() * taglines.length)]
+  );
+
   const scrollerRefs = useRef<(ImageScrollerHandle | null)[]>([]);
 
   type Category = {
@@ -211,7 +225,10 @@ function App() {
   return (
     <>
       <div className={STYLES.App}>
-        <h1>Shotski's Random Delta Force Loadout Spinner</h1>
+        <div className={STYLES.title}>
+          <h1>Shotski's Delta Force Random Loadouts</h1>
+          <div className={STYLES.tagLine}>{tagLine}</div>
+        </div>
 
         <div className={classnames(STYLES.row, STYLES.mobileOnly)}>
           {spinning.some(Boolean) ? (
