@@ -12,12 +12,12 @@ export type FaceSpec =
     };
 
 export type DiceRollerHandle = {
-  roll: (faces?: FaceSpec[] | null) => Promise<number>;
+  roll: (faces?: FaceSpec[] | null) => Promise<number | string>;
 };
 
 const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const resolveRef = useRef<((result: number) => void) | null>(null);
+  const resolveRef = useRef<((result: number | string) => void) | null>(null);
   const faceSpecsRef = useRef<FaceSpec[] | null>(null);
   const worldRef = useRef<World | null>(null);
   const diceBodyRef = useRef<Body | null>(null);
@@ -31,7 +31,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
   useImperativeHandle(ref, () => ({
     roll: (faces?: FaceSpec[] | null) => {
-      return new Promise<number>((resolve) => {
+      return new Promise<number | string>((resolve) => {
         resolveRef.current = resolve;
         faceSpecsRef.current = faces ?? null;
         // if effect hasn't finished mounting, queue the call
@@ -272,15 +272,13 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       });
     }
 
-    // BoxGeometry material order: +X, -X, +Y, -Y, +Z, -Z
-    // Our getDiceResult maps: +Y -> 1, -Y -> 6, +X -> 3, -X -> 4, +Z -> 2, -Z -> 5
     const materials = [
-      new THREE.MeshBasicMaterial({ map: createPipTexture(3) }), // +X
-      new THREE.MeshBasicMaterial({ map: createPipTexture(4) }), // -X
-      new THREE.MeshBasicMaterial({ map: createPipTexture(1) }), // +Y (top)
-      new THREE.MeshBasicMaterial({ map: createPipTexture(6) }), // -Y (bottom)
-      new THREE.MeshBasicMaterial({ map: createPipTexture(2) }), // +Z (front)
-      new THREE.MeshBasicMaterial({ map: createPipTexture(5) }), // -Z (back)
+      new THREE.MeshBasicMaterial({ map: createPipTexture(3) }),
+      new THREE.MeshBasicMaterial({ map: createPipTexture(4) }),
+      new THREE.MeshBasicMaterial({ map: createPipTexture(1) }),
+      new THREE.MeshBasicMaterial({ map: createPipTexture(6) }),
+      new THREE.MeshBasicMaterial({ map: createPipTexture(2) }),
+      new THREE.MeshBasicMaterial({ map: createPipTexture(5) }),
     ];
 
     // Use MeshStandardMaterial so lighting affects the faces; tint with base color #10f898
@@ -396,13 +394,17 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
       // Check if dice has settled and resolve promise if present
       if (
-        diceBody.velocity.length() < 0.1 &&
-        diceBody.angularVelocity.length() < 0.1
+        diceBody.velocity.length() < 0.01 &&
+        diceBody.angularVelocity.length() < 0.01 &&
+        diceBody.position.y < 18
       ) {
-        console.log("settled");
         isSettled = true;
         if (resolveRef.current) {
-          const result = getDiceResult(diceBody.quaternion);
+          const result = getDiceResult(
+            diceBody.quaternion,
+            faceSpecsRef.current
+          );
+          console.log("settled", result);
           resolveRef.current(result);
           resolveRef.current = null;
           // clear temporary boundary walls once the die has settled
@@ -442,9 +444,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     }
 
     function startRoll() {
-      if (frameIdRef.current === null) {
-        animate();
-      }
       if (!diceBody) return;
       // ensure canvas is visible immediately when a roll starts
       try {
@@ -572,16 +571,20 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     };
   }, []);
 
-  function getDiceResult(q: Quaternion): number {
+  function getDiceResult(
+    q: Quaternion,
+    faceSpecs: FaceSpec[] | null
+  ): number | string {
     // Map quaternion to up face (cube)
     const up = new Vec3(0, 1, 0);
+    // 1: top (+Y), 2: front (+Z), 3: right (+X), 4: left (-X), 5: back (-Z), 6: bottom (-Y)
     const faces = [
       new Vec3(0, 1, 0), // 1
-      new Vec3(0, -1, 0), // 6
+      new Vec3(0, 0, 1), // 2
       new Vec3(1, 0, 0), // 3
       new Vec3(-1, 0, 0), // 4
-      new Vec3(0, 0, 1), // 2
       new Vec3(0, 0, -1), // 5
+      new Vec3(0, -1, 0), // 6
     ];
     let maxDot = -Infinity;
     let result = 1;
@@ -594,6 +597,18 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         result = i + 1;
       }
     }
+
+    if (faceSpecs && faceSpecs.length === 6) {
+      const spec = faceSpecs[result - 1];
+      if (typeof spec === "object") {
+        return spec.value;
+      } else if (typeof spec === "number") {
+        return spec;
+      } else if (typeof spec === "string") {
+        return spec;
+      }
+    }
+
     return result;
   }
 

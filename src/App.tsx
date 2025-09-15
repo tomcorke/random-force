@@ -86,7 +86,7 @@ function App() {
     useSettings();
   // dice roller
   const { rollDice, DiceRollerComponent } = useDiceRoller();
-  const [diceResult, setDiceResult] = useState<number | null>(null);
+  const [diceResult, setDiceResult] = useState<number | string | null>(null);
 
   const categories: Category[] = [
     {

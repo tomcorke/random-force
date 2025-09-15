@@ -6,7 +6,7 @@ import type { DiceRollerHandle, FaceSpec } from "../components/DiceRoller";
 export function useDiceRoller() {
   const diceRef = useRef<DiceRollerHandle | null>(null);
 
-  const rollDice = (faces: FaceSpec[] | null | undefined) => {
+  const rollDice = (faces?: FaceSpec[] | null | undefined) => {
     return (
       diceRef.current?.roll(faces) ?? Promise.reject("DiceRoller not mounted")
     );
