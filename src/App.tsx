@@ -351,7 +351,14 @@ function App() {
             <Button
               onClick={async () => {
                 try {
-                  const res = await rollDice();
+                  const res = await rollDice([
+                    { value: "easy" },
+                    { value: "normal" },
+                    { value: "easy" },
+                    { value: "normal" },
+                    { value: "easy" },
+                    { value: "normal" },
+                  ]);
                   setDiceResult(res);
                 } catch {
                   // ignore if not mounted

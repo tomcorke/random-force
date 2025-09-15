@@ -2,13 +2,23 @@ import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import * as THREE from "three";
 import { World, Body, Box, Vec3, Quaternion } from "cannon-es";
 
+export type FaceSpec =
+  | string
+  | number
+  | {
+      value: string | number;
+      label?: string;
+      colour?: string;
+    };
+
 export type DiceRollerHandle = {
-  roll: () => Promise<number>;
+  roll: (faces?: FaceSpec[] | null) => Promise<number>;
 };
 
 const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const resolveRef = useRef<((result: number) => void) | null>(null);
+  const faceSpecsRef = useRef<FaceSpec[] | null>(null);
   const worldRef = useRef<World | null>(null);
   const diceBodyRef = useRef<Body | null>(null);
   const diceMeshRef = useRef<THREE.Mesh | null>(null);
@@ -19,9 +29,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   const queuedStartCallsRef = useRef<Array<() => void>>([]);
 
   useImperativeHandle(ref, () => ({
-    roll: () => {
+    roll: (faces?: FaceSpec[] | null) => {
       return new Promise<number>((resolve) => {
         resolveRef.current = resolve;
+        faceSpecsRef.current = faces ?? null;
         // if effect hasn't finished mounting, queue the call
         if (!mountedRef.current) {
           queuedStartCallsRef.current.push(() => startRollRef.current());
@@ -103,10 +114,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     const world = new World({ gravity: new Vec3(0, -20, 0) });
     worldRef.current = world;
 
-    // Dice body (tripled size)
+    // Dice body (double the previous visual size)
     const diceBody = new Body({
       mass: 6,
-      shape: new Box(new Vec3(9, 9, 9)),
+      shape: new Box(new Vec3(12, 12, 12)),
       position: new Vec3(0, 36, 0),
       angularDamping: 0.12,
       linearDamping: 0.08,
@@ -115,8 +126,8 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     diceBodyRef.current = diceBody;
 
     // Dice mesh with numbered face textures generated via canvas
-    // match the visual size to the physics body (tripled)
-    const diceGeometry = new THREE.BoxGeometry(18, 18, 18);
+    // match the visual size to the physics body (now doubled)
+    const diceGeometry = new THREE.BoxGeometry(24, 24, 24);
 
     function createPipTexture(n: number) {
       const size = 512;
@@ -190,6 +201,82 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       const tex = new THREE.CanvasTexture(canvas);
       tex.needsUpdate = true;
       return tex;
+    }
+
+    function createFaceTextureFromSpec(spec: FaceSpec, size = 1024) {
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d")!;
+      // background
+      const bg =
+        typeof spec === "object" && spec.colour ? spec.colour : "#10f898";
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, size, size);
+      // border
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = Math.max(6, Math.floor(size * 0.02));
+      ctx.strokeRect(12, 12, size - 24, size - 24);
+
+      // text to display
+      const text =
+        typeof spec === "object"
+          ? String(spec.label ?? spec.value)
+          : String(spec);
+      // draw centered
+      const fontSize = Math.floor(size * 0.28);
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `${fontSize}px sans-serif`;
+      // break long text if necessary
+      const maxWidth = size * 0.8;
+      if (ctx.measureText(text).width <= maxWidth) {
+        ctx.fillText(text, size / 2, size / 2);
+      } else {
+        // naive wrap: split by space
+        const parts = String(text).split(/\s+/);
+        const lines: string[] = [];
+        let current = "";
+        for (const part of parts) {
+          const cand = current ? `${current} ${part}` : part;
+          if (ctx.measureText(cand).width <= maxWidth) current = cand;
+          else {
+            if (current) lines.push(current);
+            current = part;
+          }
+        }
+        if (current) lines.push(current);
+        const lineHeight = fontSize * 0.9;
+        const startY = size / 2 - (lines.length - 1) * (lineHeight / 2);
+        for (let i = 0; i < lines.length; i++) {
+          ctx.fillText(lines[i], size / 2, startY + i * lineHeight);
+        }
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
+      return tex;
+    }
+
+    function materialsFromSpecs(
+      specs?: FaceSpec[] | null
+    ): THREE.MeshStandardMaterial[] | null {
+      // mapping for cube materials array: +X, -X, +Y, -Y, +Z, -Z
+      // user-provided specs are expected in face order 1..6 (traditional die):
+      // 1: top (+Y), 2: front (+Z), 3: right (+X), 4: left (-X), 5: back (-Z), 6: bottom (-Y)
+      // mapping indices: [3,4,1,6,2,5] -> zero-based: [2,3,0,5,1,4]
+      if (!specs || specs.length !== 6) return null;
+      const mapIdx = [2, 3, 0, 5, 1, 4];
+      return mapIdx.map((i) => {
+        const tex = createFaceTextureFromSpec(specs[i]);
+        return new THREE.MeshStandardMaterial({
+          map: tex,
+          color: new THREE.Color("#ffffff"),
+          roughness: 0.6,
+          metalness: 0.05,
+        });
+      });
     }
 
     // BoxGeometry material order: +X, -X, +Y, -Y, +Z, -Z
@@ -329,6 +416,8 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
           } catch {
             // ignore
           }
+          // after the roll, clear any faceSpecs to avoid leaking into next roll
+          faceSpecsRef.current = null;
         }
       }
 
@@ -366,6 +455,27 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
           // create walls on left/top/bottom
           createBoundaryWallsForSides(["left", "top", "bottom"], 100);
           break;
+      }
+
+      // if custom face specs provided for this roll, apply them now
+      try {
+        const specs = faceSpecsRef.current;
+        const newMats = materialsFromSpecs(specs ?? null);
+        if (newMats && diceMesh) {
+          // dispose previous maps
+          const prev = diceMesh.material as unknown as THREE.Material[];
+          if (Array.isArray(prev)) {
+            prev.forEach((pm) => {
+              const m = pm as THREE.MeshStandardMaterial;
+              if (m.map) m.map.dispose();
+              m.dispose();
+            });
+          }
+          diceMesh.material =
+            newMats as unknown as THREE.MeshStandardMaterial[];
+        }
+      } catch {
+        // ignore errors generating custom faces and fall back to default pips
       }
 
       // put dice well above ground to allow tumble
