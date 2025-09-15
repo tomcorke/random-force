@@ -24,6 +24,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   const diceMeshRef = useRef<THREE.Mesh | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const frameIdRef = useRef<number | null>(null);
+  const fadeTimeoutRef = useRef<number | null>(null);
   const startRollRef = useRef<() => void>(() => {});
   const mountedRef = useRef(false);
   const queuedStartCallsRef = useRef<Array<() => void>>([]);
@@ -382,6 +383,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     // no visual debug wall helpers
 
     function animate() {
+      let isSettled = false;
       world.step(1 / 60);
       if (diceMesh && diceBody) {
         // sync positions between Cannon and Three
@@ -395,9 +397,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       // Check if dice has settled and resolve promise if present
       if (
         diceBody.velocity.length() < 0.1 &&
-        diceBody.angularVelocity.length() < 0.1 &&
-        diceBody.position.y < 2.5
+        diceBody.angularVelocity.length() < 0.1
       ) {
+        console.log("settled");
+        isSettled = true;
         if (resolveRef.current) {
           const result = getDiceResult(diceBody.quaternion);
           resolveRef.current(result);
@@ -410,14 +413,51 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
           }
           // after the roll, clear any faceSpecs to avoid leaking into next roll
           faceSpecsRef.current = null;
+          // schedule fade-out 5s after roll finishes
+          try {
+            const el = renderer.domElement;
+            if (fadeTimeoutRef.current) {
+              clearTimeout(fadeTimeoutRef.current);
+              fadeTimeoutRef.current = null;
+            }
+            fadeTimeoutRef.current = window.setTimeout(() => {
+              try {
+                el.style.transition = "opacity 2000ms ease";
+                el.style.opacity = "0";
+              } catch {
+                // ignore
+              }
+            }, 5000);
+          } catch {
+            // ignore
+          }
         }
       }
 
-      frameIdRef.current = requestAnimationFrame(animate);
+      if (!isSettled) {
+        frameIdRef.current = requestAnimationFrame(animate);
+      } else {
+        frameIdRef.current = null;
+      }
     }
 
     function startRoll() {
+      if (frameIdRef.current === null) {
+        animate();
+      }
       if (!diceBody) return;
+      // ensure canvas is visible immediately when a roll starts
+      try {
+        const el = renderer.domElement;
+        el.style.transition = "none";
+        el.style.opacity = "1";
+        if (fadeTimeoutRef.current) {
+          clearTimeout(fadeTimeoutRef.current);
+          fadeTimeoutRef.current = null;
+        }
+      } catch {
+        // ignore
+      }
       // larger span so the die is thrown farther across the viewport
       const spanLarge = 300;
       // compute spawn margin so die starts outside the walls considering die half-size
@@ -511,6 +551,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     return () => {
       window.removeEventListener("resize", handleResize);
       if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current);
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+        fadeTimeoutRef.current = null;
+      }
       // dispose three renderer and remove DOM element
       try {
         renderer.dispose();

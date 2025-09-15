@@ -351,13 +351,21 @@ function App() {
             <Button
               onClick={async () => {
                 try {
+                  // const res = await rollDice([
+                  //   { value: "easy" },
+                  //   { value: "normal" },
+                  //   { value: "easy" },
+                  //   { value: "normal" },
+                  //   { value: "easy" },
+                  //   { value: "normal" },
+                  // ]);
                   const res = await rollDice([
-                    { value: "easy" },
-                    { value: "normal" },
-                    { value: "easy" },
-                    { value: "normal" },
-                    { value: "easy" },
-                    { value: "normal" },
+                    { value: 100, label: "100k" },
+                    { value: 200, label: "200k" },
+                    { value: 300, label: "300k" },
+                    { value: 400, label: "400k" },
+                    { value: 500, label: "500k" },
+                    { value: 600, label: "600k" },
                   ]);
                   setDiceResult(res);
                 } catch {
