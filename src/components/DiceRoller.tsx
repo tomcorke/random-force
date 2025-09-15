@@ -20,12 +20,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
   useImperativeHandle(ref, () => ({
     roll: () => {
-      console.debug("DiceRoller: roll() called via imperative handle");
       return new Promise<number>((resolve) => {
         resolveRef.current = resolve;
         // if effect hasn't finished mounting, queue the call
         if (!mountedRef.current) {
-          console.debug("DiceRoller: roll queued until mount");
           queuedStartCallsRef.current.push(() => startRollRef.current());
         } else {
           startRollRef.current();
@@ -34,7 +32,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     },
     // also expose a startRoll for callers that want to trigger without promise
     startRoll: () => {
-      console.debug("DiceRoller: startRoll() called via imperative handle");
       startRollRef.current();
     },
   }));
@@ -44,22 +41,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     const mount = mountRef.current;
     // Three.js setup
     const scene = new THREE.Scene();
-    // debug visuals
-    const DEBUG = true;
-    const wallMeshes: THREE.Mesh[] = [];
-    let spawnMarker: THREE.Mesh | null = null;
-    if (DEBUG) {
-      const axes = new THREE.AxesHelper(80);
-      scene.add(axes);
-      const grid = new THREE.GridHelper(1200, 24, 0x444444, 0x222222);
-      scene.add(grid);
-      spawnMarker = new THREE.Mesh(
-        new THREE.SphereGeometry(6, 12, 8),
-        new THREE.MeshBasicMaterial({ color: 0xff0000 })
-      );
-      spawnMarker.visible = false;
-      scene.add(spawnMarker);
-    }
+    // no debug visuals in production build
     const camera = new THREE.PerspectiveCamera(5, 1, 0.1, 2500);
     // Top-down view: position high on Y and look at the plane so the top face points toward the viewer
     // position camera so the full play area (walls) is visible; base on viewport
@@ -67,14 +49,9 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     const cameraY = Math.max(240, viewportSpan * 0.9);
     camera.position.set(0, cameraY, 0);
     camera.lookAt(0, 0, 0);
-    // debug camera
-    console.debug("DiceRoller: camera positioned", {
-      y: camera.position.y,
-      viewportSpan,
-    });
+    // camera positioned based on viewport span
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    // give the canvas a faint background so it's easy to spot during debugging
-    renderer.setClearColor(new THREE.Color(0x000000), 0.06);
+    // keep transparent background for overlay
 
     function setRendererSize() {
       const w = window.innerWidth;
@@ -97,13 +74,11 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     renderer.domElement.style.pointerEvents = "none";
     // put the canvas above the UI so it's visible
     renderer.domElement.style.zIndex = "9999";
-    // add a subtle border so the canvas is easy to spot during debugging
-    renderer.domElement.style.border = "2px solid rgba(255,0,0,0.12)";
+    // no debug border
     // append to document.body so it covers the full viewport reliably
     document.body.appendChild(renderer.domElement);
     rendererRef.current = renderer;
-    // debug mount
-    console.debug("DiceRoller: renderer appended to document.body");
+    // renderer appended to document.body
 
     // Lighting: ambient + directional so the dice has depth; directional casts shadows
     const ambient = new THREE.AmbientLight(0xffffff, 0.4);
@@ -246,7 +221,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     diceMesh.receiveShadow = false;
     // ensure visual matches physics start position
     diceMesh.position.copy(diceBody.position as unknown as THREE.Vector3);
-    console.debug("DiceRoller: dice mesh created at", diceMesh.position);
 
     // Add an invisible floor that only receives shadows so it doesn't obscure the page
     const floorGeo = new THREE.PlaneGeometry(2000, 2000);
@@ -273,12 +247,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     function clearBoundaryWalls() {
       boundaryWalls.forEach((b) => world.removeBody(b));
       boundaryWalls.length = 0;
-      // also clear debug wall visuals
-      try {
-        updateDebugWalls();
-      } catch {
-        // ignore
-      }
     }
 
     function createBoundaryWallsForSides(
@@ -329,84 +297,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         world.addBody(bottom);
         boundaryWalls.push(bottom);
       }
-      // update debug visuals to show the limit as span
-      try {
-        updateDebugWalls(limit);
-      } catch {
-        // ignore
-      }
+      // no debug visuals
     }
 
-    // debug: draw wall bounds as wireframe boxes so we can visualise spawn/limits
-    function updateDebugWalls(
-      span = Math.max(window.innerWidth, window.innerHeight) / 4
-    ) {
-      if (!DEBUG) return;
-      // remove existing
-      wallMeshes.forEach((m) => {
-        if (m.parent) m.parent.remove(m);
-      });
-      wallMeshes.length = 0;
-      const wallThicknessVis = 1;
-      const wallHeightVis = 20;
-      const mat = new THREE.MeshBasicMaterial({
-        color: 0x00ffff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6,
-      });
-      const make = (
-        sx: number,
-        sy: number,
-        sz: number,
-        px: number,
-        py: number,
-        pz: number
-      ) => {
-        const geo = new THREE.BoxGeometry(sx * 2, sy * 2, sz * 2);
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.set(px, py, pz);
-        scene.add(mesh);
-        wallMeshes.push(mesh);
-      };
-      // left
-      make(
-        wallThicknessVis,
-        wallHeightVis,
-        span,
-        -span - wallThicknessVis,
-        wallHeightVis / 2 - 1,
-        0
-      );
-      // right
-      make(
-        wallThicknessVis,
-        wallHeightVis,
-        span,
-        span + wallThicknessVis,
-        wallHeightVis / 2 - 1,
-        0
-      );
-      // front
-      make(
-        span,
-        wallHeightVis,
-        wallThicknessVis,
-        0,
-        wallHeightVis / 2 - 1,
-        -span - wallThicknessVis
-      );
-      // back
-      make(
-        span,
-        wallHeightVis,
-        wallThicknessVis,
-        0,
-        wallHeightVis / 2 - 1,
-        span + wallThicknessVis
-      );
-    }
-    updateDebugWalls();
+    // no visual debug wall helpers
 
     function animate() {
       world.step(1 / 60);
@@ -476,15 +370,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
       // put dice well above ground to allow tumble
       diceBody.position.set(px, 36 + Math.random() * 18, pz);
-      console.debug("DiceRoller: dice positioned", { px, pz });
-      // show spawn marker briefly
-      if (spawnMarker) {
-        spawnMarker.visible = true;
-        spawnMarker.position.set(px, 8, pz);
-        setTimeout(() => {
-          if (spawnMarker) spawnMarker.visible = false;
-        }, 2000);
-      }
+      // no spawn marker in production
       diceBody.velocity.set(vx, 8 + Math.random() * 8, vz);
       diceBody.angularVelocity.set(
         Math.random() * 10,
@@ -500,7 +386,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       // kick off animation loop if not running
       if (frameIdRef.current == null)
         frameIdRef.current = requestAnimationFrame(animate);
-      console.debug("DiceRoller: throw velocities", { vx, vz });
+      // throw initiated
     }
 
     // expose startRoll via ref so the imperative handle can call it
@@ -515,12 +401,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     // handle resize
     function handleResize() {
       setRendererSize();
-      // update debug visuals for new viewport
-      try {
-        updateDebugWalls();
-      } catch {
-        // ignore
-      }
+      // no debug visuals to update on resize
     }
     window.addEventListener("resize", handleResize);
 
@@ -541,12 +422,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       }
       // clear world
       world.bodies.forEach((b) => world.removeBody(b));
-      // cleanup debug meshes
-      wallMeshes.forEach((m) => {
-        if (m.parent) m.parent.remove(m);
-      });
-      if (spawnMarker && spawnMarker.parent)
-        spawnMarker.parent.remove(spawnMarker);
+      // no debug meshes to cleanup
     };
   }, []);
 

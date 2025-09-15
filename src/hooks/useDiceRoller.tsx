@@ -11,8 +11,6 @@ export function useDiceRoller() {
   };
 
   function DiceRollerComponent() {
-    // debug: render-time indicator
-    console.debug("useDiceRoller: rendering DiceRollerComponent");
     return <DiceRoller ref={diceRef} />;
   }
 
