@@ -1,6 +1,9 @@
 .Button {
-  background-color: var(--df-green);
-  border: 0;
+  --button-color: var(--df-green);
+
+  background-color: var(--button-color);
+  border-radius: 6px;
+  border: 4px outset var(--button-color);
   padding: 8px 16px;
   font-size: 18px;
   font-weight: bold;
@@ -10,11 +13,14 @@
   font-weight: bold;
   color: #111;
 
-  &:active {
+  &:active,
+  &.active {
     border-style: inset;
+    --button-color: var(--df-green-light);
   }
 
-  &.default {
+  &:hover {
+    --button-color: var(--df-green-light);
   }
 
   &.small {
@@ -24,6 +30,8 @@
 
   &.disabled {
     background-color: #888;
+    border-color: #888;
+    opacity: 0.8;
     /* pointer-events: none; */
     cursor: not-allowed;
   }

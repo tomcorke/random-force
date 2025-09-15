@@ -137,6 +137,10 @@ function App() {
     Array(categories.length).fill(false)
   );
 
+  const [locked, setLocked] = useState<boolean[]>(
+    Array(categories.length).fill(false)
+  );
+
   const neutral = "#888888";
   const [slotColors, setSlotColors] = useState<string[]>(
     Array(categories.length).fill(neutral)
@@ -185,6 +189,9 @@ function App() {
     const minSpinTime = 1000;
     const maxSpinTime = 5000;
     categories.forEach((_, i) => {
+      if (locked[i]) {
+        return;
+      }
       const spinTime =
         Math.random() * (maxSpinTime - minSpinTime) + minSpinTime;
       scrollerRefs.current[i]?.spin(spinTime);
@@ -210,16 +217,17 @@ function App() {
 
         <div className={classnames(STYLES.row, STYLES.mobileOnly)}>
           {spinning.some(Boolean) ? (
-            <Button onClick={stopAll}>
-              Let the reels spin, or press to stop now!
-            </Button>
+            <Button onClick={stopAll}>Stop all</Button>
           ) : (
             <Button onClick={spinAll}>Shoot, Loot, and Scoot!</Button>
           )}
         </div>
         <div className={classnames(STYLES.row, STYLES.slotRow)}>
           {categories.map((cat, idx) => (
-            <div className={STYLES.column} key={cat.key}>
+            <div
+              className={classnames(STYLES.column, STYLES.slotContainer)}
+              key={cat.key}
+            >
               <Slot
                 color={slotColors[idx]}
                 label={cat.key}
@@ -237,8 +245,10 @@ function App() {
                   selectionFilter={cat.selectionFilter}
                 />
               </Slot>
-              <div style={{ marginTop: 8, textAlign: "center" }}>
+              <div className={STYLES.slotButtons}>
                 <Button
+                  disabled={locked[idx]}
+                  buttonStyle="small"
                   onClick={() => {
                     if (spinning[idx]) {
                       scrollerRefs.current[idx]?.stopImmediate();
@@ -254,19 +264,41 @@ function App() {
                 >
                   {spinning[idx] ? "stop" : "spin"}
                 </Button>
+                <Button
+                  buttonStyle="small"
+                  active={locked[idx]}
+                  onClick={() => {
+                    if (spinning[idx]) {
+                      scrollerRefs.current[idx]?.stopImmediate();
+                    }
+                    if (locked[idx]) {
+                      // unlock
+                      setLocked((prev) => {
+                        const next = prev.slice();
+                        next[idx] = false;
+                        return next;
+                      });
+                    } else {
+                      // lock
+                      setLocked((prev) => {
+                        const next = prev.slice();
+                        next[idx] = true;
+                        return next;
+                      });
+                    }
+                  }}
+                >
+                  {locked[idx] ? "hold" : "hold"}
+                </Button>
               </div>
             </div>
           ))}
         </div>
         <div className={STYLES.row}>
           {spinning.some(Boolean) ? (
-            <Button onClick={stopAll}>
-              Let the wheels spin, or press to stop now!
-            </Button>
+            <Button onClick={stopAll}>Stop all</Button>
           ) : (
-            <Button onClick={spinAll}>
-              Shoot, Loot, and Scoot! Spin the wheels!
-            </Button>
+            <Button onClick={spinAll}>Spin all!</Button>
           )}
         </div>
         <SettingsPanel />

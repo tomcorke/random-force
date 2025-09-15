@@ -91,8 +91,19 @@ export const SettingsPanel = () => {
     setTierBounds(key, next);
   };
 
-  const loadPreset = (preset: "easy" | "normal" | "fullSend") => {
-    if (preset === "easy") {
+  const loadPreset = (
+    preset: "everything" | "easy" | "normal" | "fullSend"
+  ) => {
+    if (preset === "everything") {
+      setTierBounds("helmets", { min: 1, max: 6 });
+      setTierBounds("vests", { min: 1, max: 6 });
+      setTierBounds("rigs", { min: 1, max: 6 });
+      setTierBounds("backpacks", { min: 1, max: 6 });
+      Object.keys(weaponTypeEnabled).forEach((type) =>
+        setWeaponTypeEnabled(type, true)
+      );
+      Object.keys(mapEnabled).forEach((map) => setMapEnabled(map, true));
+    } else if (preset === "easy") {
       setTierBounds("helmets", { min: 1, max: 4 });
       setTierBounds("vests", { min: 1, max: 4 });
       setTierBounds("rigs", { min: 1, max: 4 });
@@ -167,6 +178,12 @@ export const SettingsPanel = () => {
           <div>
             <div className={STYLES.sectionNote}>Load Settings Preset</div>
             <div className={STYLES.column}>
+              <Button
+                buttonStyle={"small"}
+                onClick={() => loadPreset("everything")}
+              >
+                Everything
+              </Button>
               <Button buttonStyle={"small"} onClick={() => loadPreset("easy")}>
                 Easy
               </Button>

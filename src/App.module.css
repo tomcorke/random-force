@@ -1,5 +1,6 @@
 .App {
-  --df-green: #10f898;
+  --df-green: #10c079;
+  --df-green-light: #49ce98;
   --df-quality-common: #c4c4c2;
   --df-grey: var(--df-quality-common);
   /* uncommon, rare, epic, legendary, exotic */
@@ -52,20 +53,16 @@
     justify-content: center;
   }
 
-  .slotTitles {
-    display: flex;
-    flex-direction: row;
-    gap: 1em;
-    align-items: center;
-    justify-content: center;
-  }
+  .slotContainer {
+    position: relative;
 
-  .slotTitle {
-    width: 200px;
-    text-align: center;
-    color: #ddd;
-    font-size: 14px;
-    text-transform: capitalize;
+    .slotButtons {
+      position: absolute;
+      bottom: -18px;
+      display: flex;
+      flex-flow: row nowrap;
+      gap: 12px;
+    }
   }
 
   .mobileOnly {
