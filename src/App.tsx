@@ -391,7 +391,7 @@ function App() {
                       "100k",
                       "200k",
                       "300k",
-                      "500k",
+                      "400k",
                       "Unlimited",
                     ]);
                     setBudget(res.toString());

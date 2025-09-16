@@ -257,7 +257,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         const tex = createFaceTextureFromSpec(specs[i]);
         return new THREE.MeshStandardMaterial({
           map: tex,
-          color: new THREE.Color("#ffffff"),
+          color: new THREE.Color("#10f898"),
           roughness: 0.6,
           metalness: 0.05,
         });
@@ -274,7 +274,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     ];
 
     // Use MeshStandardMaterial so lighting affects the faces; tint with base color #10f898
-    const baseColor = new THREE.Color("#ffffff");
+    const baseColor = new THREE.Color("#10f898");
     const stdMaterials = materials.map((m) => {
       const map = (m as THREE.MeshBasicMaterial).map ?? null;
       return new THREE.MeshStandardMaterial({
