@@ -380,7 +380,7 @@ function App() {
             </div>
           </div>
           <div className={STYLES.diceSection}>
-            <h2>Budget</h2>
+            <h2>Weapon Mod Budget</h2>
             <div className={STYLES.result}>{budget}</div>
             <div className={STYLES.button}>
               <Button
