@@ -117,8 +117,6 @@ export const SettingsPanel = () => {
       Object.keys(weaponTypeEnabled).forEach((type) =>
         setWeaponTypeEnabled(type, true)
       );
-      setWeaponTypeEnabled("sniper", false);
-      setWeaponTypeEnabled("special", false);
       Object.keys(mapEnabled).forEach((map) => setMapEnabled(map, true));
       setMapEnabled("Brakkesh", false);
       setMapEnabled("Space City", false);
