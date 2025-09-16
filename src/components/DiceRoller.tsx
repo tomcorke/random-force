@@ -96,9 +96,9 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     // renderer appended to document.body
 
     // Lighting: ambient + directional so the dice has depth; directional casts shadows
-    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambient);
-    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    const dir = new THREE.DirectionalLight(0xffffff, 4.5);
     dir.position.set(50, 100, 50);
     dir.castShadow = true;
     dir.shadow.mapSize.width = 2048;
@@ -213,6 +213,24 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         typeof spec === "object" && spec.colour ? spec.colour : "#10f898";
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, size, size);
+
+      // border
+      ctx.strokeStyle = "rgba(0,0,0,0.6)";
+      ctx.lineWidth = size * 0.1;
+      ctx.strokeRect(0, 0, size, size);
+      // make "outset" border so the top left edges are lighter, and the bottom right edges are darker
+      ctx.beginPath();
+      ctx.moveTo(0, size);
+      ctx.lineTo(0, 0);
+      ctx.lineTo(size, 0);
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(size, 0);
+      ctx.lineTo(size, size);
+      ctx.lineTo(0, size);
+      ctx.strokeStyle = "rgba(0,0,0,0.4)";
+      ctx.stroke();
 
       // text to display
       const text =
