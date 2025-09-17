@@ -411,6 +411,20 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       }
       renderer.render(scene, camera);
 
+      // If dice velocity is low, remove boundary walls to allow it to settle flat
+      // and not cocked on an edge against a wall
+      if (
+        diceBody.velocity.length() < 1.5 &&
+        diceBody.angularVelocity.length() < 1.5 &&
+        boundaryWalls.length > 0
+      ) {
+        try {
+          clearBoundaryWalls();
+        } catch {
+          // ignore
+        }
+      }
+
       // Check if dice has settled and resolve promise if present
       if (
         diceBody.velocity.length() < 0.01 &&
