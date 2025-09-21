@@ -1,15 +1,6 @@
 import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import * as THREE from "three";
-import {
-  World,
-  Body,
-  Box,
-  Vec3,
-  Quaternion,
-  type CollisionType,
-  EventTarget,
-  ContactEquation,
-} from "cannon-es";
+import { World, Body, Box, Vec3, Quaternion, ContactEquation } from "cannon-es";
 import useAudio from "../../contexts/useAudio";
 
 export type FaceSpec =
