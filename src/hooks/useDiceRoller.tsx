@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-import DiceRoller from "../components/DiceRoller";
+import { DiceRoller } from "../components/DiceRoller";
 import type { DiceRollerHandle, FaceSpec } from "../components/DiceRoller";
 
 export function useDiceRoller() {

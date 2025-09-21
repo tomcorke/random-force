@@ -1,7 +1,16 @@
 import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import * as THREE from "three";
-import { World, Body, Box, Vec3, Quaternion } from "cannon-es";
-import useAudio from "../contexts/useAudio";
+import {
+  World,
+  Body,
+  Box,
+  Vec3,
+  Quaternion,
+  type CollisionType,
+  EventTarget,
+  ContactEquation,
+} from "cannon-es";
+import useAudio from "../../contexts/useAudio";
 
 export type FaceSpec =
   | string
@@ -388,7 +397,16 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       // no debug visuals
     }
 
-    diceBody.addEventListener("collide", () => {
+    // play rolling tick sound on collisions
+    let lastPlayTime = 0;
+    diceBody.addEventListener("collide", (e: { contact: ContactEquation }) => {
+      const linearVelocity = e.contact.bi.velocity.length();
+
+      if (linearVelocity < 5) return;
+
+      if (lastPlayTime && Date.now() - lastPlayTime < 100) return;
+      lastPlayTime = Date.now();
+
       playTick();
     });
 
@@ -637,4 +655,4 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
   return <div ref={mountRef} />;
 });
 
-export default DiceRoller;
+export { DiceRoller };
