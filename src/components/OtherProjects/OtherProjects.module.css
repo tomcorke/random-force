@@ -1,0 +1,37 @@
+.OtherProjects {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+
+  .content {
+    padding: 5px 0;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 1em;
+
+    .title {
+      color: white;
+
+      &::after {
+        display: inline;
+        content: ":";
+      }
+    }
+
+    a {
+      color: var(--df-green);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}

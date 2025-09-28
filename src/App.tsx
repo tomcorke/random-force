@@ -26,6 +26,7 @@ import {
 import classnames from "classnames";
 import { useStoredState } from "./hooks/useStoredState";
 import z from "zod";
+import { OtherProjects } from "./components/OtherProjects";
 
 const itemArrayFromData = (
   data: Record<
@@ -406,12 +407,13 @@ function App() {
           </div>
         </div>
         <SettingsPanel />
-      </div>
-      <Metadata />
-      <KoFi />
+        <Metadata />
+        <OtherProjects />
+        <KoFi />
 
-      {/* Dice UI: render full-viewport canvas and roll button above settings */}
-      <div>{DiceRollerComponent()}</div>
+        {/* Dice UI: render full-viewport canvas and roll button above settings */}
+        <div>{DiceRollerComponent()}</div>
+      </div>
     </>
   );
 }

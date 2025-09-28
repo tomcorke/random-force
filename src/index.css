@@ -11,6 +11,7 @@ html {
 
   body {
     background: var(--bg-color);
+    background: linear-gradient(180deg, var(--bg-color), black 100%);
     color: var(--text-color);
 
     min-height: 1400px;
