@@ -27,6 +27,7 @@ import classnames from "classnames";
 import { useStoredState } from "./hooks/useStoredState";
 import z from "zod";
 import { OtherProjects } from "./components/OtherProjects";
+import { Logo } from "./components/Logo/Logo";
 
 const itemArrayFromData = (
   data: Record<
@@ -239,7 +240,9 @@ function App() {
     <>
       <div className={STYLES.App}>
         <div className={STYLES.title}>
-          <h1>Shotski's Delta Force Random Loadouts</h1>
+          <h1>
+            Shotski's Delta Force <Logo /> Random Loadouts
+          </h1>
           <div className={STYLES.tagLine}>{tagLine}</div>
         </div>
 

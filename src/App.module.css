@@ -33,6 +33,17 @@
     margin-bottom: 1em;
     position: relative;
 
+    h1 {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      gap: 0.3em;
+
+      img {
+        max-height: 1.2em;
+      }
+    }
+
     .tagLine {
       position: absolute;
       bottom: -10px;

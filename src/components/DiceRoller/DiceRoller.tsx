@@ -2,6 +2,7 @@ import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import * as THREE from "three";
 import { World, Body, Box, Vec3, Quaternion, ContactEquation } from "cannon-es";
 import useAudio from "../../contexts/useAudio";
+import DiceFaceImage from "../../images/diceface.png";
 
 export type FaceSpec =
   | string
@@ -207,6 +208,10 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       return tex;
     }
 
+    const diceFaceRefImage = document.getElementById(
+      "ref-dice-face-image"
+    ) as HTMLImageElement | null;
+
     function createFaceTextureFromSpec(spec: FaceSpec, size = 1024) {
       const canvas = document.createElement("canvas");
       canvas.width = size;
@@ -218,9 +223,18 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, size, size);
 
+      // load the image at ../../images/diceface.png and apply it to the face texture
+      if (diceFaceRefImage && diceFaceRefImage.complete) {
+        try {
+          ctx.drawImage(diceFaceRefImage, 0, 0, size, size);
+        } catch {
+          // ignore
+        }
+      }
+
       // border
       ctx.strokeStyle = "rgba(0,0,0,0.6)";
-      ctx.lineWidth = size * 0.1;
+      ctx.lineWidth = size * 0.05;
       ctx.strokeRect(0, 0, size, size);
       // make "outset" border so the top left edges are lighter, and the bottom right edges are darker
       ctx.beginPath();
@@ -243,7 +257,6 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
           : String(spec);
       // draw centered
       let fontSize = Math.floor(size * 0.28);
-      ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = `${fontSize}px sans-serif`;
@@ -259,7 +272,15 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         ctx.font = `${fontSize}px sans-serif`;
       }
 
+      ctx.fillStyle = "#fff";
+      ctx.shadowColor = "#000";
+      ctx.shadowBlur = fontSize * 0.02;
       ctx.fillText(text, size / 2, size / 2);
+      ctx.shadowBlur = fontSize * 0.05;
+      ctx.fillText(text, size / 2, size / 2);
+      ctx.shadowBlur = fontSize * 0.1;
+      ctx.fillText(text, size / 2, size / 2);
+      ctx.shadowBlur = 0;
 
       const tex = new THREE.CanvasTexture(canvas);
       tex.needsUpdate = true;
@@ -661,7 +682,16 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
 
   // startRoll is provided via startRollRef
 
-  return <div ref={mountRef} />;
+  return (
+    <>
+      <img
+        id="ref-dice-face-image"
+        src={DiceFaceImage}
+        style={{ display: "none" }}
+      />
+      <div ref={mountRef} />
+    </>
+  );
 });
 
 export { DiceRoller };
