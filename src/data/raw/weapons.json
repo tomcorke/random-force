@@ -283,5 +283,15 @@
     "name": "Compound Bow",
     "src": "./images/compoundBow.png",
     "type": "special"
+  },
+  {
+    "name": "MK47 Assault Rifle",
+    "src": "./images/mutant.png",
+    "type": "rifle"
+  },
+  {
+    "name": "Marlin Lever-action Rifle",
+    "src": "./images/marlin.png",
+    "type": "mp"
   }
 ]

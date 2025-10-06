@@ -9,3 +9,4 @@ export * as Toxik from './Toxik';
 export * as Nox from './Nox';
 export * as Tempest from './Tempest';
 export * as Sineva from './Sineva';
+export * as Raptor from './Raptor';

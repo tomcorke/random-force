@@ -64,5 +64,11 @@
     "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10038.png",
     "name": "Sineva",
     "role": "project"
+  },
+  {
+    "src": "./images/raptor2.png",
+    "icon": "https://deltaforcewiki.vasdgame.com/playerhub/40001/operator/abilities/10033.png",
+    "name": "Raptor",
+    "role": "scout"
   }
 ]

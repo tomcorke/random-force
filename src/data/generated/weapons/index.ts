@@ -55,3 +55,5 @@ export * as _93R from './_93R';
 export * as G17 from './G17';
 export * as M1911 from './M1911';
 export * as Compound_Bow from './Compound_Bow';
+export * as MK47_Assault_Rifle from './MK47_Assault_Rifle';
+export * as Marlin_Lever_action_Rifle from './Marlin_Lever_action_Rifle';
