@@ -61,9 +61,13 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     // Top-down view: position high on Y and look at the plane so the top face points toward the viewer
     // position camera so the full play area (walls) is visible; base on viewport
     const viewportSpan = Math.max(window.innerWidth, window.innerHeight);
-    const cameraY = Math.max(240, viewportSpan * 0.9);
+    const cameraY = 2000;
     camera.position.set(0, cameraY, 0);
     camera.lookAt(0, 0, 0);
+
+    // update camera aspect on window resize
+    window.addEventListener("resize", setRendererSize);
+
     // camera positioned based on viewport span
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     // keep transparent background for overlay
