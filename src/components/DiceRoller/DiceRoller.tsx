@@ -60,7 +60,7 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
     const camera = new THREE.PerspectiveCamera(5, 1, 0.1, 2500);
     // Top-down view: position high on Y and look at the plane so the top face points toward the viewer
     // position camera so the full play area (walls) is visible; base on viewport
-    const viewportSpan = Math.max(window.innerWidth, window.innerHeight);
+    // const viewportSpan = Math.max(window.innerWidth, window.innerHeight);
     const cameraY = 2000;
     camera.position.set(0, cameraY, 0);
     camera.lookAt(0, 0, 0);
