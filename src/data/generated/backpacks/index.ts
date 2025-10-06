@@ -9,7 +9,7 @@ export * as MAP_Recon_Backpack from './MAP_Recon_Backpack';
 export * as Field_Hiking_Backpack from './Field_Hiking_Backpack';
 export * as D2_Tactical_Climbing_Bag from './D2_Tactical_Climbing_Bag';
 export * as GT1_Outdoor_Climbing_Bag from './GT1_Outdoor_Climbing_Bag';
-export * as Pangolin_Universal_Tactical_Backpack from './Pangolin_Universal_Tactical_Backpack';
+export * as Survival_Tactical_Backpack from './Survival_Tactical_Backpack';
 export * as Large_Climbing_Bag from './Large_Climbing_Bag';
 export * as _3H_Tactical_Backpack from './_3H_Tactical_Backpack';
 export * as DASH_Tactical_Backpack from './DASH_Tactical_Backpack';
