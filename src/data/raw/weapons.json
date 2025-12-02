@@ -293,5 +293,10 @@
     "name": "Marlin Lever-action Rifle",
     "src": "./images/marlin.png",
     "type": "mp"
+  },
+  {
+    "name": "MK4 Submachine Gun",
+    "src": "./images/mk4.png",
+    "type": "smg"
   }
 ]

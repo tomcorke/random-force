@@ -57,3 +57,4 @@ export * as M1911 from './M1911';
 export * as Compound_Bow from './Compound_Bow';
 export * as MK47_Assault_Rifle from './MK47_Assault_Rifle';
 export * as Marlin_Lever_action_Rifle from './Marlin_Lever_action_Rifle';
+export * as MK4_Submachine_Gun from './MK4_Submachine_Gun';
