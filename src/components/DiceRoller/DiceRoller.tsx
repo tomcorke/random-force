@@ -3,6 +3,9 @@ import * as THREE from "three";
 import { World, Body, Box, Vec3, Quaternion, ContactEquation } from "cannon-es";
 import useAudio from "../../contexts/useAudio";
 import DiceFaceImage from "../../images/diceface.png";
+import RoughnessImage from "../../images/metal_0015_roughness_1k.jpg";
+import NormalImage from "../../images/metal_0015_normal_opengl_1k.png";
+import MetalImage from "../../images/metal_0015_metallic_1k.jpg";
 
 export type FaceSpec =
   | string
@@ -212,6 +215,27 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
       "ref-dice-face-image"
     ) as HTMLImageElement | null;
 
+    const roughnessTexture = new THREE.TextureLoader().load(
+      (document.getElementById("ref-roughness-image") as HTMLImageElement).src
+    );
+    roughnessTexture.wrapS = THREE.RepeatWrapping;
+    roughnessTexture.wrapT = THREE.RepeatWrapping;
+    roughnessTexture.repeat.set(1, 1);
+
+    const normalTexture = new THREE.TextureLoader().load(
+      (document.getElementById("ref-normal-image") as HTMLImageElement).src
+    );
+    normalTexture.wrapS = THREE.RepeatWrapping;
+    normalTexture.wrapT = THREE.RepeatWrapping;
+    normalTexture.repeat.set(1, 1);
+
+    const metalTexture = new THREE.TextureLoader().load(
+      (document.getElementById("ref-metal-image") as HTMLImageElement).src
+    );
+    metalTexture.wrapS = THREE.RepeatWrapping;
+    metalTexture.wrapT = THREE.RepeatWrapping;
+    metalTexture.repeat.set(1, 1);
+
     function createFaceTextureFromSpec(spec: FaceSpec, size = 1024) {
       const canvas = document.createElement("canvas");
       canvas.width = size;
@@ -301,8 +325,8 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         return new THREE.MeshStandardMaterial({
           map: tex,
           color: new THREE.Color("#10f898"),
-          roughness: 0.6,
-          metalness: 0.05,
+          roughness: 0.7,
+          metalness: 0.2,
         });
       });
     }
@@ -689,6 +713,17 @@ const DiceRoller = forwardRef<DiceRollerHandle, object>((_props, ref) => {
         src={DiceFaceImage}
         style={{ display: "none" }}
       />
+      <img
+        id="ref-roughness-image"
+        src={RoughnessImage}
+        style={{ display: "none" }}
+      />
+      <img
+        id="ref-normal-image"
+        src={NormalImage}
+        style={{ display: "none" }}
+      />
+      <img id="ref-metal-image" src={MetalImage} style={{ display: "none" }} />
       <div ref={mountRef} />
     </>
   );
